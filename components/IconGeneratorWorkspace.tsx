@@ -90,9 +90,15 @@ export function IconGeneratorWorkspace() {
       setLibraryNote(data.libraryNote ?? "");
 
       if (!data.ok) {
+        // Agent responded but produced no usable icons -- a real content
+        // failure, distinct from the network/exception path below. Route it
+        // to the same "error" status so the message actually renders instead
+        // of silently landing on "ready" with an empty icon list.
         setResultsError(data.error ?? "The research agent didn't return any icon markup.");
+        setResultsStatus("error");
+      } else {
+        setResultsStatus("ready");
       }
-      setResultsStatus("ready");
     } catch (err) {
       setResultsStatus("error");
       setResultsError(err instanceof Error ? err.message : "Something went wrong");

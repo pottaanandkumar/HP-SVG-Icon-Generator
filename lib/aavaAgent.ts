@@ -71,22 +71,21 @@ async function submitJob(
   iconName: string,
   options: AgentIconRequestOptions
 ): Promise<SubmitResult> {
-  // The agent's task template variable name is inconsistent across
-  // executions — we've observed the exact same request come back demanding
-  // "{{icon_name}}" on one run and "{{Settings}}" on another, unrelated to
-  // what key we actually sent. This isn't fixable by picking "the right"
-  // key since there isn't one — it appears to vary on AAVA's side per
-  // execution. As a hedge, send the icon name under every alias we've seen
-  // referenced so whichever template revision is live that run finds its
-  // variable filled.
+  // AAVA's input binding for this agent requires the userInputs keys to be
+  // the literal "{{icon_name}}" / "{{icon_description}}" strings -- braces
+  // included -- not the bare "icon_name" / "icon_description". Sending the
+  // bare names appears to bind *sometimes* (probably via some fuzzy/fallback
+  // matching on AAVA's side), which is what made this look like flaky,
+  // input-dependent failures ("edit" reliably broken, then later "printer"
+  // and even previously-100%-reliable words like "settings" failing too)
+  // rather than a single reproducible cause. Confirmed by testing the exact
+  // same payload shape both ways, repeatedly, directly against AAVA
+  // (bypassing this app): bare keys intermittently collapse icon_name to a
+  // stray "." regardless of word; the braced keys below bound correctly on
+  // every retry, including for "edit" with no other workaround needed.
   const userInputs = {
-    icon_name: iconName,
-    Icon_name: iconName,
-    Settings: iconName,
-    ...(options.description ? { icon_description: options.description } : {}),
-    ...(options.size ? { icon_size: options.size } : {}),
-    ...(options.color ? { icon_color: options.color } : {}),
-    ...(options.states?.length ? { icon_state: options.states.join(",") } : {}),
+    "{{icon_name}}": iconName,
+    "{{icon_description}}": options.description ?? "",
   };
 
   // This endpoint only accepts multipart/form-data — application/json gets a
@@ -147,11 +146,9 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// The agent is an LLM, not a deterministic template — the same input
-// sometimes succeeds and sometimes comes back asking for a "missing"
-// parameter (and names a different placeholder each time, e.g. {{icon_name}}
-// vs {{Printer}}), so this isn't fixable by changing request formatting.
-// Retrying the whole submit+poll cycle is the practical mitigation.
+// Kept as a general safety net for one-off agent flakiness (the "edit"
+// binding bug above is deterministic and not something a retry fixes --
+// agentSafeIconName() is the actual fix for that one).
 const MAX_ATTEMPTS = 3;
 
 export async function runIconGeneratorAgent(

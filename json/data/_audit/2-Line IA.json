@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1783970042568-3kpxpd",
+    "timestamp": "2026-07-13T19:14:02.568Z",
+    "type": "column-added",
+    "summary": "Added column \"XYA\"",
+    "user": "Unknown"
+  },
+  {
+    "id": "1783970042569-xmvvi0",
+    "timestamp": "2026-07-13T19:14:02.568Z",
+    "type": "cell-changed",
+    "summary": "\"Left\" × \"XYA\": \"\" → \"Ready\"",
+    "field": "XYA",
+    "oldValue": null,
+    "newValue": "Ready",
+    "user": "Unknown"
+  },
+  {
+    "id": "1783970166768-xlde2n",
+    "timestamp": "2026-07-13T19:16:06.768Z",
+    "type": "column-removed",
+    "summary": "Removed column \"XYA\"",
+    "user": "Unknown"
+  }
+]

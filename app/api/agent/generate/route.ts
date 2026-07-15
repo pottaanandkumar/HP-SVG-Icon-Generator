@@ -3,6 +3,8 @@ import { runIconGeneratorAgent } from "@/lib/aavaAgent";
 import { hasConfidentIconMatch } from "@/lib/iconSearch";
 import { searchIconRepo } from "@/lib/iconRepo";
 
+const MAX_AGENT_ICONS = 5;
+
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const iconName = body?.iconName?.trim();
@@ -32,9 +34,12 @@ export async function POST(req: NextRequest) {
       states: body?.states,
     });
     if (result.svgs.length > 0) {
+      // The agent's own prompt asks for "exactly 4 or 5, never more" but has
+      // been observed ignoring that and returning up to 10 anyway — cap it
+      // here so the count is actually guaranteed rather than hoped for.
       return NextResponse.json({
         ok: true,
-        svgs: result.svgs,
+        svgs: result.svgs.slice(0, MAX_AGENT_ICONS),
         executionId: result.executionId,
         jobId: result.jobId,
         libraryNote,

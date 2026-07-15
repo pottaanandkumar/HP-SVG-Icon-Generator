@@ -1,0 +1,64 @@
+[
+  {
+    "id": "1783967093079-9b0gxn",
+    "timestamp": "2026-07-13T18:24:53.079Z",
+    "type": "cell-changed",
+    "summary": "\"Scan and Vectorize with HP Build \u203a [Native App]\" \u00d7 \"XYZ\": \"want\" \u2192 \"n/a\"",
+    "field": "XYZ",
+    "oldValue": "want",
+    "newValue": "n/a"
+  },
+  {
+    "id": "1783967093079-k0urtw",
+    "timestamp": "2026-07-13T18:24:53.079Z",
+    "type": "cell-changed",
+    "summary": "\"Scan to Email \u203a [Native App] \u203a [Generic Setup Instruction]\" \u00d7 \"XYZ\": \"want\" \u2192 \"n/a\"",
+    "field": "XYZ",
+    "oldValue": "want",
+    "newValue": "n/a"
+  },
+  {
+    "id": "1783967131721-zf7udg",
+    "timestamp": "2026-07-13T18:25:31.721Z",
+    "type": "column-added",
+    "summary": "Added column \"XYZ2\""
+  },
+  {
+    "id": "1783968064103-jsohei",
+    "timestamp": "2026-07-13T18:41:04.103Z",
+    "type": "column-removed",
+    "summary": "Removed column \"XYZ\""
+  },
+  {
+    "id": "1783968064103-pqcv4r",
+    "timestamp": "2026-07-13T18:41:04.103Z",
+    "type": "column-removed",
+    "summary": "Removed column \"XYZ2\""
+  },
+  {
+    "id": "1783968064103-yaspzb",
+    "timestamp": "2026-07-13T18:41:04.103Z",
+    "type": "row-removed",
+    "summary": "Removed row \"[Setup from Control panel]\""
+  },
+  {
+    "id": "1783968064103-hosnyj",
+    "timestamp": "2026-07-13T18:41:04.103Z",
+    "type": "row-removed",
+    "summary": "Removed row \"[Cloud App]\""
+  },
+  {
+    "id": "1783968878868-hqks78",
+    "timestamp": "2026-07-13T18:54:38.868Z",
+    "type": "column-added",
+    "summary": "Added column \"XYZ\"",
+    "user": "Unknown"
+  },
+  {
+    "id": "1783968894002-773d80",
+    "timestamp": "2026-07-13T18:54:54.002Z",
+    "type": "column-removed",
+    "summary": "Removed column \"XYZ\"",
+    "user": "Unknown"
+  }
+]

@@ -17,8 +17,8 @@ const FEATURED = [
     name: "IA Documentation",
     description: "Extract and generate complete color systems from any inspiration.",
     usedBy: "Used by 13 people",
-    cta: "Add to workspace",
-    href: "#",
+    cta: "Go to workspace",
+    href: "/ia-documentation",
   },
   {
     icon: Layers,
