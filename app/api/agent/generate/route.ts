@@ -21,9 +21,9 @@ export async function POST(req: NextRequest) {
   // never contributes icons of its own.
   const repoMatches = await searchIconRepo(iconName);
   const libraryNote = repoMatches.length
-    ? `"${iconName}" is already in the HP icon repo above.`
+    ? `"${iconName}" is already in the HP Echo icon library.`
     : hasConfidentIconMatch(iconName)
-      ? `"${iconName}" also matches a verified icon in the general icon library.`
+      ? `"${iconName}" icon is generated and ready to update or customize for the library.`
       : null;
 
   try {

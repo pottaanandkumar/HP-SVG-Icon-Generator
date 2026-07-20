@@ -18,13 +18,23 @@ export interface ModelInfo {
   key: string;
   column: string;
   family: string | null;
+  /** Original xlsx fill color for this model's family band. Per-model, not
+   * tab-wide -- sheets like Scan color different family groups differently
+   * (e.g. green "Esnl Enhanced" vs blue "Workflow UI"), unlike 2-Line IA
+   * where every model shares one family/color. Null if uncaptured. */
+  familyFill?: string | null;
   segment: string | null;
+  /** Same per-model treatment as familyFill, for the segment band. */
+  segmentFill?: string | null;
   engineClass: string | null;
   status: string | null;
 }
 
 export interface QuickSetColumn {
   key: string;
+  /** Product-line label shown above the model row (e.g. "LFP"). */
+  line?: string | null;
+  lineFill?: string | null;
   model: string | null;
 }
 
@@ -58,11 +68,20 @@ export interface FeatureRow {
 
 export interface HeaderStyle {
   treeHeaderFill: string | null;
-  modelHeaderFill: string | null;
-  modelSegmentFill: string | null;
+  /** Tab-wide fallback used only when a tab has no per-model familyFill
+   * (e.g. 2-Line IA, where every model shares one family/color). Sheets
+   * with per-model colors (e.g. Scan) leave this null and use
+   * ModelInfo.familyFill/segmentFill instead. */
+  modelHeaderFill?: string | null;
+  modelSegmentFill?: string | null;
   statusRowFill: string | null;
   componentsBandFill: string | null;
   componentsBandLabel: string | null;
+  quickSetsBandFill?: string | null;
+  quickSetsBandLabel?: string | null;
+  epicBandFill?: string | null;
+  epicLabel?: string | null;
+  notesLabel?: string | null;
 }
 
 export interface TabData {

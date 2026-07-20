@@ -22,5 +22,15 @@
     "type": "column-removed",
     "summary": "Removed column \"XYA\"",
     "user": "Unknown"
+  },
+  {
+    "id": "1784560408228-qx4fy5",
+    "timestamp": "2026-07-20T15:13:28.228Z",
+    "type": "field-changed",
+    "summary": "\"Right\" — source: \"\" → \"New\"",
+    "field": "source",
+    "oldValue": null,
+    "newValue": "New",
+    "user": "Unknown"
   }
 ]

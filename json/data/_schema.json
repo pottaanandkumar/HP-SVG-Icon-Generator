@@ -1,6 +1,21 @@
 {
   "tabs": [
     {
+      "name": "2-Line IA",
+      "columns": [
+        "version",
+        "source",
+        "level2",
+        "level3",
+        "level4",
+        "level5",
+        "level6",
+        "level7",
+        "models.Polestar 1 LS",
+        "models.Polestar 2 LS"
+      ]
+    },
+    {
       "name": "Scan",
       "columns": [
         "version",
@@ -14,6 +29,7 @@
         "models.Sayan MLK Wireless",
         "models.Sayan MLK ADF",
         "models.LYNX",
+        "models.newLYNX",
         "models.Jupiter",
         "models.Beam MF",
         "models.Marconi",
@@ -55,21 +71,6 @@
         "models.Aquaman",
         "models.Vivace",
         "models.Presto"
-      ]
-    },
-    {
-      "name": "2-Line IA",
-      "columns": [
-        "version",
-        "source",
-        "level2",
-        "level3",
-        "level4",
-        "level5",
-        "level6",
-        "level7",
-        "models.Polestar 1 LS",
-        "models.Polestar 2 LS"
       ]
     }
   ]

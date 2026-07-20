@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
+import { Pencil, Trash2, Save, Download, History, Bot } from "lucide-react";
 import type { AuditEntry, FeatureRow, ModelInfo, SchemaIndex, TabData } from "@/lib/iaDocRepo";
 
 const STATUS_STYLE: Record<string, string> = {
@@ -56,6 +57,21 @@ interface ChatMessage {
 }
 
 let nextTempRowId = -1;
+
+/** Partitions an ordered list into runs of consecutive items sharing the
+ * same key, so a header band can render one spanning cell per run (e.g.
+ * one colored cell per family group) instead of one cell per column --
+ * matching how the source xlsx itself merges adjacent same-value cells. */
+function groupConsecutive<T>(items: T[], keyFn: (item: T) => string): { key: string; items: T[] }[] {
+  const groups: { key: string; items: T[] }[] = [];
+  for (const item of items) {
+    const key = keyFn(item);
+    const last = groups[groups.length - 1];
+    if (last && last.key === key) last.items.push(item);
+    else groups.push({ key, items: [item] });
+  }
+  return groups;
+}
 
 function findModelByRef(models: ModelInfo[], ref: string): ModelInfo | undefined {
   const target = ref.trim().toLowerCase();
@@ -316,6 +332,34 @@ export function IaDocumentationWorkspace() {
   const hasOriginalStyle = Boolean(tabData?.headerStyle);
   const treeLabels = tabData?.featureTreeLabels ?? tabData?.featureTreeColumns ?? [];
 
+  // Which optional header bands actually apply to this tab's real data --
+  // computed from the data itself rather than hardcoded per tab, so the
+  // same rendering works for both Scan (rich: per-model family/segment
+  // colors, engine class, Quick Sets, Epic, Notes) and 2-Line IA (plain:
+  // one uniform family/segment shared by every model, nothing else).
+  // Segment only gets its own header row when it's actually grouping
+  // models differently -- if every model shares one segment value (like
+  // 2-Line IA's "POLESTAR"), showing it as a row is redundant, not
+  // informative, which is why that row was removed there earlier.
+  const hasEngineClassRow = visibleModels.some((m) => m.engineClass);
+  const distinctSegments = new Set(visibleModels.map((m) => m.segment).filter(Boolean));
+  const hasSegmentRow = distinctSegments.size > 1;
+  const hasQuickSets = (tabData?.quickSetColumns?.length ?? 0) > 0;
+  const hasComponents = (tabData?.componentColumns?.length ?? 0) > 0;
+  const hasEpicColumn = Boolean(tabData?.headerStyle?.epicBandFill || tabData?.headerStyle?.epicLabel);
+  const hasNotesColumn = Boolean(tabData?.headerStyle?.notesLabel);
+
+  const headerRowKeys = [
+    "family",
+    ...(hasQuickSets ? (["quickKey"] as const) : []),
+    ...(hasSegmentRow ? (["segment"] as const) : []),
+    "name",
+    ...(hasEngineClassRow ? (["engine"] as const) : []),
+    "status",
+  ] as const;
+  const nameRowIndex = headerRowKeys.indexOf("name");
+  const ROW_HEIGHT_PX = 28;
+
   const filtersActive = modelFilter.trim() !== "" || rowSearch.trim() !== "" || compareMode;
 
   function resetFilters() {
@@ -351,6 +395,15 @@ export function IaDocumentationWorkspace() {
       ...prev,
       rows: prev.rows.map((r) =>
         r.row === rowId ? { ...r, componentSetting: { ...r.componentSetting, [label]: value } } : r
+      ),
+    }));
+  }
+
+  function setQuickSetCell(rowId: number, key: string, value: string) {
+    updateTabData((prev) => ({
+      ...prev,
+      rows: prev.rows.map((r) =>
+        r.row === rowId ? { ...r, quickSets: { ...r.quickSets, [key]: value } } : r
       ),
     }));
   }
@@ -693,10 +746,11 @@ export function IaDocumentationWorkspace() {
 
         <button
           onClick={() => setEditMode((v) => !v)}
-          className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
+          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
             editMode ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
           }`}
         >
+          <Pencil size={14} />
           {editMode ? "Editing" : "Edit"}
         </button>
 
@@ -717,22 +771,25 @@ export function IaDocumentationWorkspace() {
             <button
               onClick={deleteSelectedRows}
               disabled={selectedRows.size === 0}
-              className="rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-40 dark:bg-red-950/40 dark:text-red-400"
+              className="flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-40 dark:bg-red-950/40 dark:text-red-400"
             >
-              Delete rows {selectedRows.size > 0 ? `(${selectedRows.size})` : ""}
+              <Trash2 size={14} />
+              Rows {selectedRows.size > 0 ? `(${selectedRows.size})` : ""}
             </button>
             <button
               onClick={deleteSelectedColumns}
               disabled={selectedModels.size === 0}
-              className="rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-40 dark:bg-red-950/40 dark:text-red-400"
+              className="flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-40 dark:bg-red-950/40 dark:text-red-400"
             >
-              Delete columns {selectedModels.size > 0 ? `(${selectedModels.size})` : ""}
+              <Trash2 size={14} />
+              Columns {selectedModels.size > 0 ? `(${selectedModels.size})` : ""}
             </button>
             <button
               onClick={saveChanges}
               disabled={!dirty || saving}
-              className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-40"
+              className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-40"
             >
+              <Save size={14} />
               {saving ? "Saving…" : dirty ? "Save changes" : "Saved"}
             </button>
           </>
@@ -740,26 +797,29 @@ export function IaDocumentationWorkspace() {
 
         <button
           onClick={exportToXlsx}
-          className="rounded-lg bg-panel px-3 py-1.5 text-sm font-medium text-ink hover:bg-black/5"
+          className="flex items-center gap-1.5 rounded-lg bg-panel px-3 py-1.5 text-sm font-medium text-ink hover:bg-black/5"
         >
-          Export to Excel
+          <Download size={14} />
+          Excel
         </button>
 
         <button
           onClick={() => setShowAudit((v) => !v)}
-          className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
+          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
             showAudit ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
           }`}
         >
+          <History size={14} />
           Audit Log {auditLog.length > 0 ? `(${auditLog.length})` : ""}
         </button>
 
         <button
           onClick={() => setCopilotOpen((v) => !v)}
-          className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
+          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
             copilotOpen ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
           }`}
         >
+          <Bot size={14} />
           Co-pilot
         </button>
 
@@ -768,8 +828,8 @@ export function IaDocumentationWorkspace() {
             {filtersActive
               ? `${visibleRows.length} of ${tabData.rows.length} rows`
               : `${tabData.rows.length} rows`}{" "}
-            · {visibleModels.length} of {tabData.models.length} models · from{" "}
-            <code className="rounded bg-panel px-1 py-0.5">{tabData.sourceFile}</code>
+            · {visibleModels.length} of {tabData.models.length} models
+            {/* <code className="rounded bg-panel px-1 py-0.5">{tabData.sourceFile}</code> */}
           </span>
         )}
       </div>
@@ -853,7 +913,7 @@ export function IaDocumentationWorkspace() {
       {showAudit && (
         <div className="rounded-2xl bg-surface p-3 shadow-sm">
           <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-            <p className="text-sm font-semibold text-ink">Audit Log</p>
+            <p className="text-sm font-semibold text-ink">Log</p>
             <div className="flex items-center gap-2">
               {editingAuthor ? (
                 <>
@@ -951,129 +1011,314 @@ export function IaDocumentationWorkspace() {
             <div className="h-[70vh] w-full overflow-auto rounded-xl">
               <table className="w-full border-collapse text-left text-xs">
                 <thead>
-                  <tr>
-                    {treeLabels.map((label, i) => (
-                      <th
-                        key={i}
-                        rowSpan={3}
-                        className="whitespace-nowrap border-b border-black/10 px-2 py-2 align-bottom font-semibold"
-                        style={{
-                          backgroundColor: tabData.headerStyle?.treeHeaderFill ?? undefined,
-                          color: tabData.headerStyle?.treeHeaderFill ? "#fff" : undefined,
-                          position: "sticky",
-                          top: 0,
-                          left: i === 0 ? 0 : undefined,
-                          zIndex: i === 0 ? 30 : 20,
-                        }}
-                      >
-                        {i === 0 ? (
-                          <div className="flex items-center gap-1">
-                            {editMode && (
-                              <input
-                                type="checkbox"
-                                checked={
-                                  visibleRows.length > 0 && visibleRows.every((r) => selectedRows.has(r.row))
-                                }
-                                onChange={toggleSelectAllVisibleRows}
-                                title="Select all visible rows"
+                  {headerRowKeys.map((rowKey, rowIndex) => {
+                    const top = rowIndex * ROW_HEIGHT_PX;
+                    const remainingRows = headerRowKeys.length - rowIndex;
+                    return (
+                      <tr key={rowKey}>
+                        {rowIndex === 0 &&
+                          nameRowIndex > 0 &&
+                          treeLabels.map((_, i) => (
+                            <th
+                              key={`tree-filler-${i}`}
+                              rowSpan={nameRowIndex}
+                              className="whitespace-nowrap px-2 py-2 font-semibold"
+                              style={{
+                                backgroundColor: tabData.headerStyle?.treeHeaderFill ?? undefined,
+                                position: "sticky",
+                                top: 0,
+                                left: i === 0 ? 0 : undefined,
+                                zIndex: i === 0 ? 30 : 20,
+                              }}
+                            />
+                          ))}
+
+                        {rowKey === "name" &&
+                          treeLabels.map((label, i) => (
+                            <th
+                              key={`tree-${i}`}
+                              rowSpan={headerRowKeys.length - nameRowIndex}
+                              className="whitespace-nowrap border-b border-black/10 px-2 py-2 align-top font-semibold"
+                              style={{
+                                backgroundColor: tabData.headerStyle?.treeHeaderFill ?? undefined,
+                                color: tabData.headerStyle?.treeHeaderFill ? "#fff" : undefined,
+                                position: "sticky",
+                                top,
+                                left: i === 0 ? 0 : undefined,
+                                zIndex: i === 0 ? 30 : 20,
+                              }}
+                            >
+                              {i === 0 ? (
+                                <div className="flex items-center gap-1">
+                                  {editMode && (
+                                    <input
+                                      type="checkbox"
+                                      checked={
+                                        visibleRows.length > 0 &&
+                                        visibleRows.every((r) => selectedRows.has(r.row))
+                                      }
+                                      onChange={toggleSelectAllVisibleRows}
+                                      title="Select all visible rows"
+                                    />
+                                  )}
+                                  {label}
+                                </div>
+                              ) : (
+                                label
+                              )}
+                            </th>
+                          ))}
+
+                        {rowKey === "family" &&
+                          groupConsecutive(visibleModels, (m) => `${m.family ?? ""}|${m.familyFill ?? ""}`).map(
+                            (group, gi) => (
+                              <th
+                                key={`fam-${gi}`}
+                                colSpan={group.items.length}
+                                className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                                style={{
+                                  backgroundColor:
+                                    group.items[0].familyFill ?? tabData.headerStyle?.modelHeaderFill ?? undefined,
+                                  color: "#fff",
+                                  position: "sticky",
+                                  top,
+                                  zIndex: 20,
+                                }}
+                              >
+                                {group.items[0].family ?? ""}
+                              </th>
+                            )
+                          )}
+
+                        {rowKey === "quickKey" &&
+                          groupConsecutive(visibleModels, (m) => `${m.family ?? ""}|${m.familyFill ?? ""}`).map(
+                            (group, gi) => (
+                              <th
+                                key={`famcont-${gi}`}
+                                colSpan={group.items.length}
+                                className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                                style={{
+                                  backgroundColor:
+                                    group.items[0].familyFill ?? tabData.headerStyle?.modelHeaderFill ?? undefined,
+                                  position: "sticky",
+                                  top,
+                                  zIndex: 20,
+                                }}
                               />
-                            )}
-                            {label}
-                          </div>
-                        ) : (
-                          label
+                            )
+                          )}
+                        {rowKey === "quickKey" &&
+                          tabData.quickSetColumns.map((qs) => (
+                            <th
+                              key={`qk-${qs.key}`}
+                              className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                              style={{
+                                backgroundColor: tabData.headerStyle?.quickSetsBandFill ?? undefined,
+                                color: "#fff",
+                                position: "sticky",
+                                top,
+                                zIndex: 20,
+                              }}
+                            >
+                              {qs.key}
+                            </th>
+                          ))}
+
+                        {rowKey === "segment" &&
+                          groupConsecutive(visibleModels, (m) => `${m.segment ?? ""}|${m.segmentFill ?? ""}`).map(
+                            (group, gi) => (
+                              <th
+                                key={`seg-${gi}`}
+                                colSpan={group.items.length}
+                                className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                                style={{
+                                  backgroundColor:
+                                    group.items[0].segmentFill ?? tabData.headerStyle?.modelSegmentFill ?? undefined,
+                                  color: "#fff",
+                                  position: "sticky",
+                                  top,
+                                  zIndex: 20,
+                                }}
+                              >
+                                {group.items[0].segment ?? ""}
+                              </th>
+                            )
+                          )}
+                        {rowKey === "segment" &&
+                          tabData.quickSetColumns.map((qs) => (
+                            <th
+                              key={`line-${qs.key}`}
+                              className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                              style={{
+                                backgroundColor: qs.lineFill ?? undefined,
+                                color: "#fff",
+                                position: "sticky",
+                                top,
+                                zIndex: 20,
+                              }}
+                            >
+                              {qs.line ?? ""}
+                            </th>
+                          ))}
+
+                        {rowKey === "name" &&
+                          visibleModels.map((m) => (
+                            <th
+                              key={`name-${m.key}`}
+                              title={`${m.family ?? ""} / ${m.segment ?? ""} / ${m.engineClass ?? ""} (${m.status ?? ""})`}
+                              className="whitespace-nowrap border-b border-black/10 px-2 py-2 font-semibold"
+                              style={{
+                                backgroundColor:
+                                  m.familyFill ?? tabData.headerStyle?.modelHeaderFill ?? undefined,
+                                color: "#fff",
+                                position: "sticky",
+                                top,
+                                zIndex: 20,
+                              }}
+                            >
+                              <div className="flex items-center gap-1">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedModels.has(m.key)}
+                                  onChange={() => toggleModelSelected(m.key)}
+                                  title="Select for compare"
+                                />
+                                {m.key}
+                              </div>
+                            </th>
+                          ))}
+                        {rowKey === "name" &&
+                          tabData.componentColumns?.map((label) => (
+                            <th
+                              key={`complabel-${label}`}
+                              rowSpan={remainingRows}
+                              className="whitespace-nowrap border-b border-black/10 px-2 py-2 align-top font-semibold"
+                              style={{
+                                backgroundColor: tabData.headerStyle?.treeHeaderFill ?? undefined,
+                                color: tabData.headerStyle?.treeHeaderFill ? "#fff" : undefined,
+                                position: "sticky",
+                                top,
+                                zIndex: 20,
+                              }}
+                            >
+                              {label}
+                            </th>
+                          ))}
+                        {rowKey === "name" &&
+                          tabData.quickSetColumns.map((qs) => (
+                            <th
+                              key={`qm-${qs.key}`}
+                              rowSpan={remainingRows}
+                              className="whitespace-nowrap border-b border-black/10 px-2 py-2 align-top font-semibold"
+                              style={{
+                                backgroundColor: tabData.headerStyle?.quickSetsBandFill ?? undefined,
+                                color: "#fff",
+                                position: "sticky",
+                                top,
+                                zIndex: 20,
+                              }}
+                            >
+                              {qs.model ?? ""}
+                            </th>
+                          ))}
+
+                        {rowKey === "engine" &&
+                          visibleModels.map((m) => (
+                            <th
+                              key={`eng-${m.key}`}
+                              className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                              style={{
+                                backgroundColor: tabData.headerStyle?.statusRowFill ?? undefined,
+                                position: "sticky",
+                                top,
+                                zIndex: 20,
+                              }}
+                            >
+                              {m.engineClass ?? ""}
+                            </th>
+                          ))}
+
+                        {rowKey === "status" &&
+                          visibleModels.map((m) => (
+                            <th
+                              key={`stat-${m.key}`}
+                              className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                              style={{
+                                backgroundColor: tabData.headerStyle?.statusRowFill ?? undefined,
+                                position: "sticky",
+                                top,
+                                zIndex: 20,
+                              }}
+                            >
+                              {m.status ?? ""}
+                            </th>
+                          ))}
+
+                        {rowIndex === 0 && hasComponents && (
+                          <th
+                            colSpan={tabData.componentColumns!.length}
+                            rowSpan={nameRowIndex}
+                            className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                            style={{
+                              backgroundColor: tabData.headerStyle?.componentsBandFill ?? undefined,
+                              color: "#fff",
+                              position: "sticky",
+                              top: 0,
+                              zIndex: 20,
+                            }}
+                          >
+                            {tabData.headerStyle?.componentsBandLabel ?? "Components"}
+                          </th>
                         )}
-                      </th>
-                    ))}
-                    {visibleModels.length > 0 && (
-                      <th
-                        colSpan={visibleModels.length}
-                        className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
-                        style={{
-                          backgroundColor: tabData.headerStyle?.modelHeaderFill ?? undefined,
-                          color: tabData.headerStyle?.modelHeaderFill ? "#fff" : undefined,
-                          position: "sticky",
-                          top: 0,
-                          zIndex: 20,
-                        }}
-                      >
-                        {visibleModels[0]?.family ?? ""}
-                      </th>
-                    )}
-                    {(tabData.componentColumns?.length ?? 0) > 0 && (
-                      <th
-                        colSpan={tabData.componentColumns!.length}
-                        className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
-                        style={{
-                          backgroundColor: tabData.headerStyle?.componentsBandFill ?? undefined,
-                          color: tabData.headerStyle?.componentsBandFill ? "#fff" : undefined,
-                          position: "sticky",
-                          top: 0,
-                          zIndex: 20,
-                        }}
-                      >
-                        {tabData.headerStyle?.componentsBandLabel ?? "Components"}
-                      </th>
-                    )}
-                  </tr>
-                  <tr>
-                    {visibleModels.map((m) => (
-                      <th
-                        key={m.key}
-                        title={`${m.family ?? ""} / ${m.segment ?? ""} (${m.status ?? ""})`}
-                        className="whitespace-nowrap border-b border-black/10 px-2 py-2 font-semibold"
-                        style={{
-                          backgroundColor: tabData.headerStyle?.modelHeaderFill ?? undefined,
-                          color: tabData.headerStyle?.modelHeaderFill ? "#fff" : undefined,
-                          position: "sticky",
-                          top: 28,
-                          zIndex: 20,
-                        }}
-                      >
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="checkbox"
-                            checked={selectedModels.has(m.key)}
-                            onChange={() => toggleModelSelected(m.key)}
-                            title="Select for compare"
-                          />
-                          {m.key}
-                        </div>
-                      </th>
-                    ))}
-                    {tabData.componentColumns?.map((label) => (
-                      <th
-                        key={label}
-                        rowSpan={2}
-                        className="whitespace-nowrap border-b border-black/10 px-2 py-2 align-bottom font-semibold"
-                        style={{
-                          backgroundColor: tabData.headerStyle?.treeHeaderFill ?? undefined,
-                          color: tabData.headerStyle?.treeHeaderFill ? "#fff" : undefined,
-                          position: "sticky",
-                          top: 28,
-                          zIndex: 20,
-                        }}
-                      >
-                        {label}
-                      </th>
-                    ))}
-                  </tr>
-                  <tr>
-                    {visibleModels.map((m) => (
-                      <th
-                        key={m.key}
-                        className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
-                        style={{
-                          backgroundColor: tabData.headerStyle?.statusRowFill ?? undefined,
-                          position: "sticky",
-                          top: 56,
-                          zIndex: 20,
-                        }}
-                      >
-                        {m.status ?? ""}
-                      </th>
-                    ))}
-                  </tr>
+
+                        {rowIndex === 0 && hasQuickSets && (
+                          <th
+                            colSpan={tabData.quickSetColumns.length}
+                            className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                            style={{
+                              backgroundColor: tabData.headerStyle?.quickSetsBandFill ?? undefined,
+                              color: "#fff",
+                              position: "sticky",
+                              top: 0,
+                              zIndex: 20,
+                            }}
+                          >
+                            {tabData.headerStyle?.quickSetsBandLabel ?? "Quick Sets"}
+                          </th>
+                        )}
+
+                        {rowIndex === 0 && hasEpicColumn && (
+                          <th
+                            rowSpan={headerRowKeys.length}
+                            className="whitespace-nowrap border-b border-black/10 px-2 py-2 align-bottom font-semibold"
+                            style={{
+                              backgroundColor: tabData.headerStyle?.epicBandFill ?? undefined,
+                              color: "#fff",
+                              position: "sticky",
+                              top: 0,
+                              zIndex: 20,
+                            }}
+                          >
+                            {tabData.headerStyle?.epicLabel ?? "Epic"}
+                          </th>
+                        )}
+
+                        {rowIndex === 0 && hasNotesColumn && (
+                          <th
+                            rowSpan={headerRowKeys.length}
+                            className="whitespace-nowrap border-b border-black/10 px-2 py-2 align-bottom font-semibold"
+                            style={{
+                              position: "sticky",
+                              top: 0,
+                              zIndex: 20,
+                            }}
+                          >
+                            {tabData.headerStyle?.notesLabel ?? "Notes"}
+                          </th>
+                        )}
+                      </tr>
+                    );
+                  })}
                 </thead>
                 <tbody>
                   {visibleRows.map((row) => {
@@ -1166,6 +1411,48 @@ export function IaDocumentationWorkspace() {
                             )}
                           </td>
                         ))}
+                        {tabData.quickSetColumns.map((qs) => (
+                          <td
+                            key={qs.key}
+                            className="whitespace-nowrap border-b border-black/5 px-2 py-1.5 text-ink"
+                          >
+                            {editMode ? (
+                              <input
+                                value={row.quickSets?.[qs.key] ?? ""}
+                                onChange={(e) => setQuickSetCell(row.row, qs.key, e.target.value)}
+                                className="w-full min-w-[5rem] rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-black/10 focus:border-black/20"
+                              />
+                            ) : (
+                              row.quickSets?.[qs.key] ?? ""
+                            )}
+                          </td>
+                        ))}
+                        {hasEpicColumn && (
+                          <td className="whitespace-nowrap border-b border-black/5 px-2 py-1.5 text-ink">
+                            {editMode ? (
+                              <input
+                                value={row.epicStory ?? ""}
+                                onChange={(e) => setRowField(row.row, "epicStory", e.target.value)}
+                                className="w-full min-w-[5rem] rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-black/10 focus:border-black/20"
+                              />
+                            ) : (
+                              row.epicStory ?? ""
+                            )}
+                          </td>
+                        )}
+                        {hasNotesColumn && (
+                          <td className="whitespace-nowrap border-b border-black/5 px-2 py-1.5 text-ink">
+                            {editMode ? (
+                              <input
+                                value={row.designNotes ?? ""}
+                                onChange={(e) => setRowField(row.row, "designNotes", e.target.value)}
+                                className="w-full min-w-[8rem] rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-black/10 focus:border-black/20"
+                              />
+                            ) : (
+                              row.designNotes ?? ""
+                            )}
+                          </td>
+                        )}
                       </tr>
                     );
                   })}

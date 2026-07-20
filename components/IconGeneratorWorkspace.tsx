@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { AlertTriangle, CheckCircle2, Download, FileImage, FileCode2, Loader2, Sparkles } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Download, FileImage, FileCode2, ImageOff, Loader2, Sparkles } from "lucide-react";
 import { IconSwatch } from "@/components/IconSwatch";
 import { CodeCard } from "@/components/CodeCard";
 import {
@@ -259,6 +259,8 @@ export function IconGeneratorWorkspace() {
           <RepoIconPreview icon={repoMatch} size={size} color={color} states={states} />
         )}
 
+        {repoStatus === "not-found" && <RepoNotFoundPreview queryName={query} />}
+
         {libraryNote && (
           <div className="flex items-start gap-3 rounded-2xl border border-emerald-300/60 bg-emerald-50 p-4 text-sm text-emerald-900">
             <CheckCircle2 size={18} className="mt-0.5 shrink-0" />
@@ -329,19 +331,19 @@ function RepoIconPreview({
     <>
       <div className="rounded-2xl bg-surface p-6 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-ink">Output Preview — {icon.name}</h3>
+          <h3 className="text-lg font-semibold text-ink">ECHO Design System — {icon.name}</h3>
           <div className="flex gap-2">
             <button
               onClick={exportPng}
               className="flex items-center gap-1.5 rounded-lg bg-panel px-3 py-2 text-sm font-medium text-brand hover:bg-black/5"
             >
-              <FileImage size={14} /> Export PNG
+              <FileImage size={14} /> PNG
             </button>
             <button
               onClick={() => downloadSvg(exportSvg, `${fileBase}.svg`)}
               className="flex items-center gap-1.5 rounded-lg bg-panel px-3 py-2 text-sm font-medium text-brand hover:bg-black/5"
             >
-              <FileCode2 size={14} /> Export SVG
+              <FileCode2 size={14} /> SVG
             </button>
             <button
               onClick={() => copyToClipboard(exportSvg)}
@@ -394,6 +396,35 @@ function RepoIconPreview({
   );
 }
 
+/** Mirrors RepoIconPreview's layout so the two states (found / not found)
+ * read as one consistent card design, just with a dashed placeholder and no
+ * export actions in place of an actual icon. */
+function RepoNotFoundPreview({ queryName }: { queryName: string }) {
+  return (
+    <div className="rounded-2xl bg-surface p-6 shadow-sm">
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-ink">ECHO Design System — {queryName}</h3>
+      </div>
+
+      <div className="flex items-center justify-center gap-6 rounded-xl bg-[#f5f5f7] py-8">
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex h-[140px] w-[140px] items-center justify-center rounded-xl border border-dashed border-black/15 bg-white">
+            <ImageOff size={28} className="text-muted" />
+          </div>
+          <span className="text-xs text-muted">Light mode</span>
+        </div>
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex h-[140px] w-[140px] items-center justify-center rounded-xl border border-dashed border-white/15 bg-[#1c1c1e]">
+            <ImageOff size={28} className="text-white/40" />
+          </div>
+          <span className="text-xs text-muted">Dark mode</span>
+        </div>
+      </div>
+      <p className="mt-3 text-center text-xs text-muted">No icon found in Echo Library</p>
+    </div>
+  );
+}
+
 function AgentIconPreview({
   icons,
   labels,
@@ -442,13 +473,13 @@ function AgentIconPreview({
               onClick={() => downloadAll("svg")}
               className="flex items-center gap-1.5 rounded-lg bg-panel px-3 py-2 text-sm font-medium text-brand hover:bg-black/5"
             >
-              <Download size={14} /> Download all (SVG)
+              <Download size={14} /> All SVGs
             </button>
             <button
               onClick={() => downloadAll("png")}
               className="flex items-center gap-1.5 rounded-lg bg-panel px-3 py-2 text-sm font-medium text-brand hover:bg-black/5"
             >
-              <Download size={14} /> Download all (PNG)
+              <Download size={14} /> All PNGs
             </button>
           </div>
         </div>

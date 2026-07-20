@@ -3,7 +3,7 @@
     "id": "1783967093079-9b0gxn",
     "timestamp": "2026-07-13T18:24:53.079Z",
     "type": "cell-changed",
-    "summary": "\"Scan and Vectorize with HP Build \u203a [Native App]\" \u00d7 \"XYZ\": \"want\" \u2192 \"n/a\"",
+    "summary": "\"Scan and Vectorize with HP Build › [Native App]\" × \"XYZ\": \"want\" → \"n/a\"",
     "field": "XYZ",
     "oldValue": "want",
     "newValue": "n/a"
@@ -12,7 +12,7 @@
     "id": "1783967093079-k0urtw",
     "timestamp": "2026-07-13T18:24:53.079Z",
     "type": "cell-changed",
-    "summary": "\"Scan to Email \u203a [Native App] \u203a [Generic Setup Instruction]\" \u00d7 \"XYZ\": \"want\" \u2192 \"n/a\"",
+    "summary": "\"Scan to Email › [Native App] › [Generic Setup Instruction]\" × \"XYZ\": \"want\" → \"n/a\"",
     "field": "XYZ",
     "oldValue": "want",
     "newValue": "n/a"
@@ -59,6 +59,183 @@
     "timestamp": "2026-07-13T18:54:54.002Z",
     "type": "column-removed",
     "summary": "Removed column \"XYZ\"",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054276-ed156u",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "column-added",
+    "summary": "Added column \"newLYNX\"",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054276-z70khy",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"Scan and Vectorize with HP Build › [Native App]\" × \"newLYNX\": \"\" → \"want\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "want",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054277-f0a52f",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"Scan to Computer › [Generic Setup Instruction]\" × \"newLYNX\": \"\" → \"Y\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "Y",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054277-bvxbu5",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"Select Computer › {list of Connected Computers} › [Job Submission (below)]\" × \"newLYNX\": \"\" → \"Y\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "Y",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054277-9sme4s",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"Computer Not Listed › [Set Up Instructions]\" × \"newLYNX\": \"\" → \"Y\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "Y",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054277-bv6bzt",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"Scan to <Computer>\" × \"newLYNX\": \"\" → \"Y\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "Y",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054277-jqwls0",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"[Scan Shortcut]\" × \"newLYNX\": \"\" → \"Y\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "Y",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054277-7420c5",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"Save as PDF\" × \"newLYNX\": \"\" → \"Y\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "Y",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054277-i3637g",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"Save as JPEG\" × \"newLYNX\": \"\" → \"Y\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "Y",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054277-1h0otm",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"Email as PDF\" × \"newLYNX\": \"\" → \"Y\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "Y",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054277-ntl8qx",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"Email as JPEG\" × \"newLYNX\": \"\" → \"Y\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "Y",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054277-qgkest",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"Everyday Scan\" × \"newLYNX\": \"\" → \"Y\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "Y",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054277-5dj6vb",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"Resolution            <value> › {see List In Options Below}\" × \"newLYNX\": \"\" → \"Y\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "Y",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054277-k1qnx5",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"Orientation › [Refer Scan options from above list]\" × \"newLYNX\": \"\" → \"Y\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "Y",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054277-du8k64",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"[All Options] › [see [Options] below]\" × \"newLYNX\": \"\" → \"Y\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "Y",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054277-moo7kj",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"[Start/Send Button] › [initiate Scan Workflow UI]\" × \"newLYNX\": \"\" → \"Y\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "Y",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054278-tbpo8o",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"Resolution › [Refer Scan options from above list]\" × \"newLYNX\": \"\" → \"Y\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "Y",
+    "user": "Unknown"
+  },
+  {
+    "id": "1784570054278-lidkem",
+    "timestamp": "2026-07-20T17:54:14.276Z",
+    "type": "cell-changed",
+    "summary": "\"Orientation › [Refer Scan options from above list]\" × \"newLYNX\": \"\" → \"Y\"",
+    "field": "newLYNX",
+    "oldValue": null,
+    "newValue": "Y",
     "user": "Unknown"
   }
 ]
