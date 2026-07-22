@@ -54,14 +54,6 @@
       "status": "WIP"
     },
     {
-      "key": "newLYNX",
-      "column": "",
-      "family": "Esnl Enhanced",
-      "segment": null,
-      "engineClass": "MFP-Color-2.1",
-      "status": "WIP"
-    },
-    {
       "key": "Jupiter",
       "column": "L",
       "family": "Workflow UI",
@@ -582,8 +574,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "want"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -646,8 +637,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level4": {
@@ -710,8 +700,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24610 Enterprise Scan: Quick Setup Wizard for Scan to Email"
     },
@@ -768,8 +757,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -825,8 +813,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -882,8 +869,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -940,8 +926,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level3": {
@@ -1004,8 +989,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -1062,8 +1046,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24979 Enterprise: Scan to Job Storage",
       "designNotes": "n/a For All Pro Products (line Logic)"
@@ -1122,8 +1105,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level3": {
@@ -1186,8 +1168,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "designNotes": "Cloud app; no local settings"
     },
@@ -1245,8 +1226,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "Y"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level3": {
@@ -1308,8 +1288,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24993 Enterprise Scan: View Remote Scan Requests"
     },
@@ -1366,8 +1345,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -1424,8 +1402,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -1487,8 +1464,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -1544,8 +1520,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -1602,8 +1577,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "designNotes": "Cloud app; no local settings"
     },
@@ -1661,8 +1635,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "designNotes": "Cloud app; no local settings"
     },
@@ -1720,8 +1693,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "designNotes": "Cloud app; no local settings"
     },
@@ -1779,8 +1751,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -1837,8 +1808,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -1892,8 +1862,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "designNotes": "Casual & ProSelect Only",
       "cellStyle": {
@@ -1982,8 +1951,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level3": {
@@ -2059,8 +2027,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -2140,8 +2107,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -2221,8 +2187,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -2302,8 +2267,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -2383,8 +2347,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -2464,8 +2427,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -2545,8 +2507,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -2626,8 +2587,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -2707,8 +2667,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -2788,8 +2747,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -2869,8 +2827,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -2950,8 +2907,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -2992,8 +2948,7 @@
       "level7": null,
       "models": {
         "Jupiter": "WIP",
-        "Beam MF": "WIP",
-        "newLYNX": "n/a"
+        "Beam MF": "WIP"
       },
       "cellStyle": {
         "version": {
@@ -3082,8 +3037,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "designNotes": "MM: Shortcuts is applicable and not Quicksets"
     },
@@ -3141,8 +3095,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -3199,8 +3152,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -3257,8 +3209,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -3315,8 +3266,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level3": {
@@ -3379,8 +3329,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -3437,8 +3386,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "designNotes": "Suggested By Pete At top Level For ProSelect; Either As Preset Or Separate Option",
       "cellStyle": {
@@ -3502,8 +3450,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level3": {
@@ -3566,8 +3513,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level3": {
@@ -3630,8 +3576,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "designNotes": "Not needed for Pro (UX confirmed). Waiting on feedback from UX for Curie/Bell; is this needed?"
     },
@@ -3689,8 +3634,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level3": {
@@ -3753,8 +3697,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -3811,8 +3754,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -3869,8 +3811,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -3927,8 +3868,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -3985,8 +3925,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       },
       "cellStyle": {
         "level3": {
@@ -4053,8 +3992,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -4111,8 +4049,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       },
       "cellStyle": {
         "level4": {
@@ -4175,8 +4112,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -4231,8 +4167,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level2": {
@@ -4295,8 +4230,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level2": {
@@ -4359,8 +4293,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -4417,8 +4350,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -4475,8 +4407,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -4533,8 +4464,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "TextField",
@@ -4597,8 +4527,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Button",
@@ -4661,8 +4590,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -4719,8 +4647,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level3": {
@@ -4783,8 +4710,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level3": {
@@ -4847,8 +4773,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level3": {
@@ -4911,8 +4836,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24476 Enterprise Scan to Email: Default message content options",
       "cellStyle": {
@@ -4976,8 +4900,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24476 Enterprise Scan to Email: Default message content options"
     },
@@ -5035,8 +4958,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24476 Enterprise Scan to Email: Default message content options"
     },
@@ -5094,8 +5016,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24476 Enterprise Scan to Email: Default message content options"
     },
@@ -5153,8 +5074,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "TextField",
@@ -5218,8 +5138,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24476 Enterprise Scan to Email: Default message content options",
       "cellStyle": {
@@ -5283,8 +5202,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24476 Enterprise Scan to Email: Default message content options"
     },
@@ -5342,8 +5260,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24476 Enterprise Scan to Email: Default message content options"
     },
@@ -5401,8 +5318,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24476 Enterprise Scan to Email: Default message content options"
     },
@@ -5460,8 +5376,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "TextField",
@@ -5525,8 +5440,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "version": {
@@ -5605,8 +5519,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox",
@@ -5669,8 +5582,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "TextField",
@@ -5739,8 +5651,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "TextField",
@@ -5809,8 +5720,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "TextField",
@@ -5880,8 +5790,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox",
@@ -5950,8 +5859,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "ComboBox",
@@ -6020,8 +5928,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox",
@@ -6084,8 +5991,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox",
@@ -6148,8 +6054,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "ComboBox",
@@ -6212,8 +6117,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -6270,8 +6174,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "Toggle",
@@ -6334,8 +6237,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -6392,8 +6294,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -6412,9 +6313,7 @@
           "bold": false
         }
       },
-      "models": {
-        "newLYNX": "n/a"
-      }
+      "models": {}
     },
     {
       "row": 105,
@@ -6470,8 +6369,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "designNotes": "Single-destination Only"
     },
@@ -6529,8 +6427,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -6587,8 +6484,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -6645,8 +6541,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -6703,8 +6598,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -6761,8 +6655,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -6801,8 +6694,7 @@
         "Polestar Hi MF": "Ready",
         "Selene": "Ready",
         "Lotus": "Ready",
-        "Euthenia": "Ready",
-        "newLYNX": "n/a"
+        "Euthenia": "Ready"
       },
       "cellStyle": {
         "version": {
@@ -6892,8 +6784,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       },
       "cellStyle": {
         "source": {
@@ -6955,8 +6846,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       },
       "cellStyle": {
         "source": {
@@ -7022,8 +6912,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -7079,8 +6968,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       },
       "componentSetting": {
         "Level 2": "Custom (Refer workstream deliverable for details)",
@@ -7142,8 +7030,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -7199,8 +7086,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -7256,8 +7142,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       },
       "cellStyle": {
         "source": {
@@ -7319,8 +7204,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -7376,8 +7260,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -7433,8 +7316,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -7457,9 +7339,7 @@
           "bold": false
         }
       },
-      "models": {
-        "newLYNX": "n/a"
-      }
+      "models": {}
     },
     {
       "row": 129,
@@ -7514,8 +7394,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       },
       "designNotes": "Single-destination Only"
     },
@@ -7572,8 +7451,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -7587,8 +7465,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       }
     },
     {
@@ -7644,8 +7521,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -7701,8 +7577,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -7717,8 +7592,7 @@
       "level7": null,
       "models": {
         "Jupiter": "WIP",
-        "Beam MF": "WIP",
-        "newLYNX": "n/a"
+        "Beam MF": "WIP"
       },
       "cellStyle": {
         "version": {
@@ -7808,8 +7682,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -7823,8 +7696,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "cellStyle": {
         "version": {
@@ -7894,8 +7766,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -7957,8 +7828,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -8014,8 +7884,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -8071,8 +7940,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -8128,8 +7996,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -8143,8 +8010,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "cellStyle": {
         "version": {
@@ -8234,8 +8100,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -8297,8 +8162,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -8354,8 +8218,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -8411,8 +8274,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -8427,8 +8289,7 @@
       "level7": null,
       "models": {
         "Jupiter": "WIP",
-        "Beam MF": "WIP",
-        "newLYNX": "n/a"
+        "Beam MF": "WIP"
       },
       "cellStyle": {
         "version": {
@@ -8475,9 +8336,7 @@
       "level5": null,
       "level6": null,
       "level7": null,
-      "models": {
-        "newLYNX": "n/a"
-      }
+      "models": {}
     },
     {
       "row": 151,
@@ -8533,8 +8392,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24979 Enterprise: Scan to Job Storage"
     },
@@ -8592,8 +8450,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -8650,8 +8507,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -8708,8 +8564,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24979 Enterprise: Scan to Job Storage",
       "cellStyle": {
@@ -8773,8 +8628,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -8831,8 +8685,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "designNotes": "Suggested By Pete At top Level For ProSelect; Either As Preset Or Separate Option",
       "cellStyle": {
@@ -8896,8 +8749,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level3": {
@@ -8960,8 +8812,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level3": {
@@ -9024,8 +8875,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "designNotes": "Not needed for Pro (UX confirmed)"
     },
@@ -9083,8 +8933,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level3": {
@@ -9147,8 +8996,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -9205,8 +9053,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -9263,8 +9110,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -9321,8 +9167,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -9379,8 +9224,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       },
       "cellStyle": {
         "level3": {
@@ -9447,8 +9291,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -9505,8 +9348,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       },
       "cellStyle": {
         "level4": {
@@ -9569,8 +9411,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24979 Enterprise: Scan to Job Storage"
     },
@@ -9628,8 +9469,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24979 Enterprise: Scan to Job Storage"
     },
@@ -9687,8 +9527,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24979 Enterprise: Scan to Job Storage",
       "designNotes": "L3 \"Scan to destination\" Section of Content Is Shown Directly Inline On L2 For Workflow UI"
@@ -9747,8 +9586,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24979 Enterprise: Scan to Job Storage",
       "designNotes": "Kate to follow up: can user create a folder??? check email",
@@ -9811,8 +9649,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -9867,8 +9704,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -9884,8 +9720,7 @@
       "models": {
         "Sayan MLK Wireless": "n/a",
         "Sayan MLK ADF": "n/a",
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -9948,8 +9783,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24979 Enterprise: Scan to Job Storage",
       "cellStyle": {
@@ -10013,8 +9847,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24979 Enterprise: Scan to Job Storage",
       "designNotes": "Job Storage ONLY"
@@ -10071,8 +9904,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level3": {
@@ -10135,8 +9967,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24979 Enterprise: Scan to Job Storage",
       "designNotes": "summary",
@@ -10157,9 +9988,7 @@
       "level5": null,
       "level6": null,
       "level7": null,
-      "models": {
-        "newLYNX": "n/a"
-      }
+      "models": {}
     },
     {
       "row": 180,
@@ -10174,8 +10003,7 @@
       "models": {
         "Sayan MLK Wireless": "n/a",
         "Sayan MLK ADF": "n/a",
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -10238,8 +10066,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24979 Enterprise: Scan to Job Storage",
       "designNotes": "Single-destination Only"
@@ -10298,8 +10125,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24979 Enterprise: Scan to Job Storage"
     },
@@ -10357,8 +10183,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24979 Enterprise: Scan to Job Storage"
     },
@@ -10416,8 +10241,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24979 Enterprise: Scan to Job Storage"
     },
@@ -10475,8 +10299,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24979 Enterprise: Scan to Job Storage"
     },
@@ -10492,8 +10315,7 @@
       "level7": null,
       "models": {
         "Jupiter": "WIP",
-        "Beam MF": "WIP",
-        "newLYNX": "n/a"
+        "Beam MF": "WIP"
       },
       "cellStyle": {
         "version": {
@@ -10581,8 +10403,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "designNotes": "MM: Shortcuts is applicable and not Quicksets"
     },
@@ -10640,8 +10461,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "Default",
@@ -10706,8 +10526,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -10764,8 +10583,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -10822,8 +10640,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level3": {
@@ -10886,8 +10703,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -10944,8 +10760,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "designNotes": "Suggested By Pete At top Level For ProSelect; Either As Preset Or Separate Option",
       "cellStyle": {
@@ -11009,8 +10824,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level3": {
@@ -11073,8 +10887,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level3": {
@@ -11137,8 +10950,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "designNotes": "Not needed for Pro (UX confirmed)"
     },
@@ -11196,8 +11008,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level3": {
@@ -11260,8 +11071,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -11318,8 +11128,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -11376,8 +11185,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -11434,8 +11242,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -11492,8 +11299,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       },
       "cellStyle": {
         "level3": {
@@ -11560,8 +11366,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -11618,8 +11423,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       },
       "cellStyle": {
         "level4": {
@@ -11682,8 +11486,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -11706,8 +11509,7 @@
         "Victoria Plus": "n/a",
         "Scorpius Wireless": "n/a",
         "Scorpius ADF": "n/a",
-        "Polestar Hi MF": "n/a",
-        "newLYNX": "n/a"
+        "Polestar Hi MF": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -11770,8 +11572,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -11828,8 +11629,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -11886,8 +11686,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -11944,8 +11743,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -12002,8 +11800,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-85859 Scan to USB - Enhanced Workflow for Enterprise"
     },
@@ -12061,8 +11858,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -12119,8 +11915,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -12177,8 +11972,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -12235,8 +12029,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level3": {
@@ -12299,8 +12092,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -12357,8 +12149,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -12415,8 +12206,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -12473,8 +12263,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -12531,8 +12320,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox",
@@ -12595,8 +12383,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "TextField",
@@ -12659,8 +12446,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "ComboBox",
@@ -12729,8 +12515,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox",
@@ -12793,8 +12578,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox",
@@ -12857,8 +12641,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "ComboBox",
@@ -12921,8 +12704,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "ComboBox",
@@ -12985,8 +12767,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -13043,8 +12824,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -13101,8 +12881,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -13118,8 +12897,7 @@
       "models": {
         "Sayan MLK Wireless": "n/a",
         "Sayan MLK ADF": "n/a",
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -13182,8 +12960,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "designNotes": "Single-destination Only"
     },
@@ -13241,8 +13018,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -13299,8 +13075,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -13357,8 +13132,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -13415,8 +13189,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -13432,8 +13205,7 @@
       "models": {
         "Sayan MLK Wireless": "n/a",
         "Sayan MLK ADF": "n/a",
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       }
     },
     {
@@ -13490,8 +13262,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -13530,8 +13301,7 @@
         "Polestar Hi MF": "WIP",
         "Selene": "WIP",
         "Lotus": "WIP",
-        "Euthenia": "WIP",
-        "newLYNX": "n/a"
+        "Euthenia": "WIP"
       },
       "cellStyle": {
         "version": {
@@ -13622,8 +13392,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "Y"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -13686,8 +13455,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "Y"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -13750,8 +13518,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "Y"
+        "Presto": "n/a"
       }
     },
     {
@@ -13808,8 +13575,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "designNotes": "MM: Shortcuts is applicable and not Quicksets"
     },
@@ -13867,8 +13633,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -13925,8 +13690,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -13983,8 +13747,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -14041,8 +13804,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "Y"
+        "Presto": "n/a"
       }
     },
     {
@@ -14098,8 +13860,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "Y"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -14177,8 +13938,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -14260,8 +14020,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -14343,8 +14102,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -14426,8 +14184,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "Y"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -14509,8 +14266,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -14592,8 +14348,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -14675,8 +14430,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -14758,8 +14512,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -14842,8 +14595,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "Y"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -14930,8 +14682,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "Y"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -15018,8 +14769,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "Y"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -15064,8 +14814,7 @@
       "level7": null,
       "models": {
         "Jupiter": "n/a",
-        "Beam MF": "n/a",
-        "newLYNX": "n/a"
+        "Beam MF": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -15128,8 +14877,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -15185,8 +14933,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -15248,8 +14995,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -15306,8 +15052,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "Y"
+        "Presto": "n/a"
       }
     },
     {
@@ -15361,8 +15106,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "Y"
+        "Presto": "n/a"
       }
     },
     {
@@ -15419,8 +15163,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "Y"
+        "Presto": "n/a"
       }
     },
     {
@@ -15434,8 +15177,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "Jupiter": "n/a",
-        "newLYNX": "n/a"
+        "Jupiter": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -15498,8 +15240,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "Y"
+        "Presto": "n/a"
       },
       "designNotes": "Single-destination Only"
     },
@@ -15557,8 +15298,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -15615,8 +15355,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -15673,8 +15412,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -15731,8 +15469,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -15789,8 +15526,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -15811,8 +15547,7 @@
       "level7": null,
       "models": {
         "Jupiter": "WIP",
-        "Beam MF": "WIP",
-        "newLYNX": "n/a"
+        "Beam MF": "WIP"
       },
       "cellStyle": {
         "version": {
@@ -15861,8 +15596,7 @@
       "level7": null,
       "models": {
         "Jupiter": "Y",
-        "Beam MF": "Y",
-        "newLYNX": "n/a"
+        "Beam MF": "Y"
       },
       "designNotes": "MM: Shortcuts is applicable and not Quicksets"
     },
@@ -15920,8 +15654,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "Default",
@@ -15986,8 +15719,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -16044,8 +15776,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -16102,8 +15833,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level3": {
@@ -16166,8 +15896,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -16224,8 +15953,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "designNotes": "Suggested By Pete At top Level For ProSelect; Either As Preset Or Separate Option",
       "cellStyle": {
@@ -16289,8 +16017,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level3": {
@@ -16353,8 +16080,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level3": {
@@ -16417,8 +16143,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "designNotes": "Not needed for Pro (UX confirmed)"
     },
@@ -16476,8 +16201,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level3": {
@@ -16540,8 +16264,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -16598,8 +16321,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -16656,8 +16378,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -16714,8 +16435,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -16772,8 +16492,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       },
       "cellStyle": {
         "level4": {
@@ -16836,8 +16555,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       }
     },
     {
@@ -16894,8 +16612,7 @@
         "Ironman": "want",
         "Aquaman": "want",
         "Vivace": "want",
-        "Presto": "want",
-        "newLYNX": "n/a"
+        "Presto": "want"
       },
       "cellStyle": {
         "level4": {
@@ -16958,8 +16675,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -17016,8 +16732,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level2": {
@@ -17080,8 +16795,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -17138,8 +16852,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -17196,8 +16909,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -17254,8 +16966,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -17312,8 +17023,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -17370,8 +17080,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -17428,8 +17137,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-86106 Scan to Network Folder (Enhance for Enterprise)",
       "cellStyle": {
@@ -17493,8 +17201,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-86106 Scan to Network Folder (Enhance for Enterprise)"
     },
@@ -17552,8 +17259,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -17610,8 +17316,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-147037 Support ability to add multiple network folder paths - Scan to Network Folder",
       "cellStyle": {
@@ -17683,8 +17388,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level2": {
@@ -17755,8 +17459,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -17813,8 +17516,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "TextField",
@@ -17877,8 +17579,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -17935,8 +17636,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level2": {
@@ -17999,8 +17699,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "ComboBox",
@@ -18070,8 +17769,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "designNotes": "summary"
     },
@@ -18129,8 +17827,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "designNotes": "summary"
     },
@@ -18188,8 +17885,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "designNotes": "summary"
     },
@@ -18247,8 +17943,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "designNotes": "summary. Recommend Adding For OPS; UX confirmation needed"
     },
@@ -18306,8 +18001,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -18322,8 +18016,7 @@
       "level7": null,
       "models": {
         "Victoria Base": "n/a",
-        "Victoria Plus": "n/a",
-        "newLYNX": "n/a"
+        "Victoria Plus": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -18386,8 +18079,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level2": {
@@ -18450,8 +18142,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "designNotes": "Single-destination Only"
     },
@@ -18509,8 +18200,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -18567,8 +18257,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -18625,8 +18314,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -18683,8 +18371,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -18741,8 +18428,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -18763,8 +18449,7 @@
       "level7": null,
       "models": {
         "Jupiter": "WIP",
-        "Beam MF": "WIP",
-        "newLYNX": "n/a"
+        "Beam MF": "WIP"
       },
       "cellStyle": {
         "version": {
@@ -18854,8 +18539,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24993 Enterprise Scan: View Remote Scan Requests"
     },
@@ -18912,8 +18596,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24993 Enterprise Scan: View Remote Scan Requests"
     },
@@ -18970,8 +18653,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24993 Enterprise Scan: View Remote Scan Requests"
     },
@@ -19028,8 +18710,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24993 Enterprise Scan: View Remote Scan Requests"
     },
@@ -19045,8 +18726,7 @@
       "level7": null,
       "models": {
         "Jupiter": "WIP",
-        "Beam MF": "WIP",
-        "newLYNX": "n/a"
+        "Beam MF": "WIP"
       },
       "designNotes": "Destinations + Options On Same Screen For Productive and Workflow UI; 2 Screens For Casual and ProSelect",
       "cellStyle": {
@@ -19138,8 +18818,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Title Text",
@@ -19208,8 +18887,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -19275,8 +18953,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24483 Enterprise Scan: Scan Mode",
       "cellStyle": {
@@ -19340,8 +19017,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -19407,8 +19083,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -19474,8 +19149,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-24483 Enterprise Scan: Scan Mode",
       "cellStyle": {
@@ -19539,8 +19213,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "n/a",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -19613,8 +19286,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -19685,8 +19357,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -19757,8 +19428,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -19830,8 +19500,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -19902,8 +19571,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -19974,8 +19642,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -20052,8 +19719,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -20134,8 +19800,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -20212,8 +19877,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -20290,8 +19954,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -20368,8 +20031,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -20446,8 +20108,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -20524,8 +20185,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -20597,8 +20257,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -20655,8 +20314,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -20727,8 +20385,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -20799,8 +20456,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -20872,8 +20528,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "Toggle",
@@ -20945,8 +20600,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -21017,8 +20671,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -21089,8 +20742,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -21161,8 +20813,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -21234,8 +20885,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -21306,8 +20956,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -21378,8 +21027,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "Y",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -21450,8 +21098,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "Toggle",
@@ -21528,8 +21175,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "Toggle",
@@ -21600,8 +21246,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Text/Image Branch",
@@ -21671,8 +21316,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Text/Image Branch",
@@ -21743,8 +21387,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -21815,8 +21458,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Text/Image Branch",
@@ -21880,8 +21522,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -21945,8 +21586,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "n/a",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Text/Image Branch",
@@ -22010,8 +21650,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -22074,8 +21713,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -22138,8 +21776,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -22211,8 +21848,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Text/Image Branch",
@@ -22284,8 +21920,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -22357,8 +21992,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "n/a",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -22430,8 +22064,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "n/a",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -22503,8 +22136,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "n/a",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -22568,8 +22200,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -22640,8 +22271,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Slider",
@@ -22719,8 +22349,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Slider",
@@ -22792,8 +22421,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Slider",
@@ -22871,8 +22499,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Checkbox",
@@ -22951,8 +22578,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Slider",
@@ -23015,8 +22641,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Slider",
@@ -23094,8 +22719,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Checkbox",
@@ -23159,8 +22783,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Slider",
@@ -23223,8 +22846,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "Toggle",
@@ -23295,8 +22917,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "quickSets": {
         "Mixed Content": "Default: 0",
@@ -23361,8 +22982,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -23427,8 +23047,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "Spinbox",
@@ -23500,8 +23119,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "Y",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "Toggle",
@@ -23572,8 +23190,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -23652,8 +23269,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "n/a",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -23732,8 +23348,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -23803,8 +23418,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "Toggle",
@@ -23875,8 +23489,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -23943,8 +23556,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -24010,8 +23622,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -24077,8 +23688,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -24150,8 +23760,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -24217,8 +23826,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -24290,8 +23898,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -24357,8 +23964,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -24424,8 +24030,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -24491,8 +24096,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -24558,8 +24162,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -24641,8 +24244,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -24715,8 +24317,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Title Text",
@@ -24793,8 +24394,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -24865,8 +24465,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -24937,8 +24536,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -25011,8 +24609,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -25085,8 +24682,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -25157,8 +24753,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -25229,8 +24824,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -25303,8 +24897,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -25377,8 +24970,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level3": {
@@ -25441,8 +25033,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level3": {
@@ -25505,8 +25096,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "level3": {
@@ -25569,8 +25159,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -25643,8 +25232,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -25717,8 +25305,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -25791,8 +25378,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -25864,8 +25450,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "Y",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -25936,8 +25521,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-86112 TIFF compression"
     },
@@ -25995,8 +25579,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -26069,8 +25652,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -26142,8 +25724,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -26207,8 +25788,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -26272,8 +25852,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -26352,8 +25931,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -26425,8 +26003,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -26498,8 +26075,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -26566,8 +26142,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -26634,8 +26209,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -26702,8 +26276,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -26770,8 +26343,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -26838,8 +26410,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -26906,8 +26477,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -26974,8 +26544,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -27048,8 +26617,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Toggle",
@@ -27118,8 +26686,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -27174,8 +26741,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -27232,8 +26798,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -27306,8 +26871,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -27378,8 +26942,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -27450,8 +27013,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -27522,8 +27084,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -27596,8 +27157,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-29789 Add second setting for compact PDF"
     },
@@ -27655,8 +27215,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-29789 Add second setting for compact PDF"
     },
@@ -27714,8 +27273,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Toggle",
@@ -27787,8 +27345,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "Text/Image Branch",
@@ -27877,8 +27434,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -27967,8 +27523,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -28057,8 +27612,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -28147,8 +27701,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -28237,8 +27790,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -28319,8 +27871,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -28397,8 +27948,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -28475,8 +28025,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -28553,8 +28102,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -28631,8 +28179,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -28705,8 +28252,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -28787,8 +28333,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -28869,8 +28414,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -28947,8 +28491,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -29025,8 +28568,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -29103,8 +28645,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -29181,8 +28722,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -29259,8 +28799,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -29337,8 +28876,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -29415,8 +28953,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -29493,8 +29030,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -29575,8 +29111,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -29657,8 +29192,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -29739,8 +29273,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -29821,8 +29354,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -29903,8 +29435,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -29985,8 +29516,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -30067,8 +29597,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -30149,8 +29678,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -30240,8 +29768,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -30330,8 +29857,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -30420,8 +29946,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -30510,8 +30035,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -30600,8 +30124,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -30690,8 +30213,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -30780,8 +30302,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -30870,8 +30391,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -30960,8 +30480,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -31051,8 +30570,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -31141,8 +30659,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -31231,8 +30748,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -31299,8 +30815,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -31367,8 +30882,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -31435,8 +30949,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -31503,8 +31016,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -31571,8 +31083,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -31639,8 +31150,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -31707,8 +31217,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -31775,8 +31284,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -31843,8 +31351,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -31911,8 +31418,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -31979,8 +31485,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -32047,8 +31552,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -32115,8 +31619,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -32183,8 +31686,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -32251,8 +31753,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -32319,8 +31820,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -32387,8 +31887,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -32455,8 +31954,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -32523,8 +32021,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -32591,8 +32088,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -32659,8 +32155,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -32727,8 +32222,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -32795,8 +32289,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -32863,8 +32356,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -32931,8 +32423,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -32999,8 +32490,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -33067,8 +32557,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -33135,8 +32624,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -33203,8 +32691,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -33271,8 +32758,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -33339,8 +32825,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -33407,8 +32892,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -33475,8 +32959,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -33543,8 +33026,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -33611,8 +33093,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -33679,8 +33160,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -33747,8 +33227,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -33815,8 +33294,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -33883,8 +33361,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -33951,8 +33428,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -34019,8 +33495,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -34087,8 +33562,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -34155,8 +33629,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -34223,8 +33696,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -34291,8 +33763,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -34359,8 +33830,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -34427,8 +33897,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -34495,8 +33964,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -34563,8 +34031,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -34631,8 +34098,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -34699,8 +34165,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -34767,8 +34232,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -34835,8 +34299,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -34903,8 +34366,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -34971,8 +34433,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -35039,8 +34500,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "?",
@@ -35106,8 +34566,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -35174,8 +34633,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "?",
@@ -35241,8 +34699,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -35314,8 +34771,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "epicStory": "DUNE-127344 Automatically Straighten (Automatic Deskew) - Design(UX) Enhancement",
       "cellStyle": {
@@ -35379,8 +34835,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -35446,8 +34901,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -35519,8 +34973,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -35592,8 +35045,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Text/Image Branch",
@@ -35662,8 +35114,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected value>",
@@ -35732,8 +35183,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": null,
@@ -35802,8 +35252,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Text Field",
@@ -35872,8 +35321,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Checkbox",
@@ -35942,8 +35390,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "componentSetting": {
         "Level 2": "Button",
@@ -36012,8 +35459,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "Toggle",
@@ -36085,8 +35531,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -36158,8 +35603,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -36231,8 +35675,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -36298,8 +35741,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -36365,8 +35807,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -36432,8 +35873,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -36499,8 +35939,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -36566,8 +36005,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "-",
@@ -36633,8 +36071,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "?",
@@ -36705,8 +36142,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "quickSets": {
         "Mixed Content": "?",
@@ -36779,9 +36215,7 @@
           "bold": false
         }
       },
-      "models": {
-        "newLYNX": "n/a"
-      }
+      "models": {}
     },
     {
       "row": 583,
@@ -36837,8 +36271,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -36893,8 +36326,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -36949,8 +36381,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -37007,8 +36438,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -37065,8 +36495,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -37123,8 +36552,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -37181,8 +36609,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -37229,9 +36656,7 @@
           "bold": false
         }
       },
-      "models": {
-        "newLYNX": "n/a"
-      }
+      "models": {}
     },
     {
       "row": 591,
@@ -37285,8 +36710,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -37352,8 +36776,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -37411,8 +36834,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -37467,8 +36889,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "Y"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -37537,8 +36958,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "Y"
+        "Presto": "n/a"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -37600,9 +37020,7 @@
           "bold": false
         }
       },
-      "models": {
-        "newLYNX": "n/a"
-      }
+      "models": {}
     },
     {
       "row": 598,
@@ -37615,8 +37033,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "cellStyle": {
         "level2": {
@@ -37636,8 +37053,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -37657,8 +37073,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "componentSetting": {
         "Level 2": "Text/Image Branch",
@@ -37678,8 +37093,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -37699,8 +37113,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -37720,8 +37133,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -37741,8 +37153,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -37762,8 +37173,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -37783,8 +37193,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -37804,8 +37213,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -37825,8 +37233,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "componentSetting": {
         "Level 2": "ComboBox <Selected Value>",
@@ -37846,8 +37253,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -37867,8 +37273,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -37888,8 +37293,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -37909,8 +37313,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "componentSetting": {
         "Level 2": null,
@@ -37930,8 +37333,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "componentSetting": {
         "Level 2": "Text/Image Branch",
@@ -37951,8 +37353,7 @@
       "level6": null,
       "level7": null,
       "models": {
-        "LYNX": "n/a",
-        "newLYNX": "n/a"
+        "LYNX": "n/a"
       },
       "componentSetting": {
         "Level 2": "Toggle",
@@ -38005,9 +37406,7 @@
           "bold": false
         }
       },
-      "models": {
-        "newLYNX": "n/a"
-      }
+      "models": {}
     },
     {
       "row": 617,
@@ -38061,8 +37460,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       }
     },
     {
@@ -38117,8 +37515,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       }
     },
     {
@@ -38173,8 +37570,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "source": {
@@ -38235,8 +37631,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "source": {
@@ -38297,8 +37692,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "source": {
@@ -38359,8 +37753,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -38421,8 +37814,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -38483,8 +37875,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -38545,8 +37936,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -38607,8 +37997,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "source": {
@@ -38669,8 +38058,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -38731,8 +38119,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "source": {
@@ -38793,8 +38180,7 @@
         "Ironman": "Y",
         "Aquaman": "Y",
         "Vivace": "Y",
-        "Presto": "Y",
-        "newLYNX": "n/a"
+        "Presto": "Y"
       },
       "cellStyle": {
         "source": {
@@ -38855,8 +38241,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "Y",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -38917,8 +38302,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {
@@ -38991,8 +38375,7 @@
         "Ironman": "n/a",
         "Aquaman": "n/a",
         "Vivace": "n/a",
-        "Presto": "n/a",
-        "newLYNX": "n/a"
+        "Presto": "n/a"
       },
       "cellStyle": {
         "source": {

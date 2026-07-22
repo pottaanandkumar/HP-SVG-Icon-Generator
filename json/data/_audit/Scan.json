@@ -237,5 +237,12 @@
     "oldValue": null,
     "newValue": "Y",
     "user": "Unknown"
+  },
+  {
+    "id": "1784736136236-9spnl1",
+    "timestamp": "2026-07-22T16:02:16.236Z",
+    "type": "column-removed",
+    "summary": "Removed column \"newLYNX\"",
+    "user": "Unknown"
   }
 ]

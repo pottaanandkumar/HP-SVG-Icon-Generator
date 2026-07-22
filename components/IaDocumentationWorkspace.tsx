@@ -1,10 +1,20 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import * as XLSX from "xlsx";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
-import { Pencil, Trash2, Save, Download, History, Bot } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  Save,
+  Download,
+  History,
+  Bot,
+  ZoomIn,
+  ZoomOut,
+  PaintBucket,
+  Ban,
+} from "lucide-react";
 import type { AuditEntry, FeatureRow, ModelInfo, SchemaIndex, TabData } from "@/lib/iaDocRepo";
 
 const STATUS_STYLE: Record<string, string> = {
@@ -13,7 +23,40 @@ const STATUS_STYLE: Record<string, string> = {
   WIP: "text-amber-600",
 };
 
+/** Same mapping as STATUS_STYLE but as real hex values -- needed for the
+ * xls export, which writes inline CSS into an HTML table rather than
+ * Tailwind classes. */
+const STATUS_HEX: Record<string, string> = {
+  Y: "#059669",
+  want: "#2563eb",
+  WIP: "#d97706",
+};
+
 const STATUS_OPTIONS = ["", "Y", "n/a", "want", "WIP", "Ready"];
+
+/** Sentinel value for paintColor meaning "clear this cell's custom fill"
+ * rather than "paint it fresh" -- kept distinct from null (paint tool off)
+ * and from any real color string. */
+const ERASE_FILL = "__erase__";
+
+const FILL_PALETTE = [
+  "#FEF3C7",
+  "#FDE68A",
+  "#FED7AA",
+  "#FECACA",
+  "#FBCFE8",
+  "#E9D5FF",
+  "#C7D2FE",
+  "#BFDBFE",
+  "#A7F3D0",
+  "#D9F99D",
+  "#E5E7EB",
+  "#FFFFFF",
+];
+
+const ZOOM_MIN = 60;
+const ZOOM_MAX = 150;
+const ZOOM_STEP = 10;
 
 const MARKDOWN_COMPONENTS: Components = {
   h1: ({ children }) => <p className="mb-1 mt-2 font-semibold text-ink first:mt-0">{children}</p>,
@@ -71,6 +114,26 @@ function groupConsecutive<T>(items: T[], keyFn: (item: T) => string): { key: str
     else groups.push({ key, items: [item] });
   }
   return groups;
+}
+
+/** Drag handle pinned to a header cell's right edge for column resize.
+ * The parent <th> must already be positioned (sticky/relative) -- true for
+ * every header cell in this file -- so this anchors to that column only. */
+function ColResizeHandle({
+  colId,
+  onResize,
+}: {
+  colId: string;
+  onResize: (e: React.MouseEvent, colId: string) => void;
+}) {
+  return (
+    <span
+      onMouseDown={(e) => onResize(e, colId)}
+      onClick={(e) => e.stopPropagation()}
+      title="Drag to resize"
+      className="absolute right-0 top-0 z-30 h-full w-1.5 cursor-col-resize select-none hover:bg-brand/50"
+    />
+  );
 }
 
 function findModelByRef(models: ModelInfo[], ref: string): ModelInfo | undefined {
@@ -238,6 +301,15 @@ export function IaDocumentationWorkspace() {
   const [selectedModels, setSelectedModels] = useState<Set<string>>(new Set());
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
 
+  const [zoom, setZoom] = useState(100);
+  const [showFillPalette, setShowFillPalette] = useState(false);
+  const [paintColor, setPaintColor] = useState<string | null>(null);
+  /** Manually-resized column widths (px), keyed by the same colId scheme as
+   * customBg ("level2", "models.<key>", "componentSetting.<label>",
+   * "quickSets.<key>", "epicStory", "designNotes"). Absent entries keep
+   * their natural content-driven width. */
+  const [colWidths, setColWidths] = useState<Record<string, number>>({});
+
   const [showAddRow, setShowAddRow] = useState(false);
   const [newRowName, setNewRowName] = useState("");
   const [newRowAfter, setNewRowAfter] = useState<number | "start">("start");
@@ -358,7 +430,7 @@ export function IaDocumentationWorkspace() {
     "status",
   ] as const;
   const nameRowIndex = headerRowKeys.indexOf("name");
-  const ROW_HEIGHT_PX = 28;
+  const ROW_HEIGHT_PX = 26;
 
   const filtersActive = modelFilter.trim() !== "" || rowSearch.trim() !== "" || compareMode;
 
@@ -397,6 +469,54 @@ export function IaDocumentationWorkspace() {
         r.row === rowId ? { ...r, componentSetting: { ...r.componentSetting, [label]: value } } : r
       ),
     }));
+  }
+
+  /** Applies (or clears, when paintColor is the ERASE sentinel) the active
+   * fill-color tool to one cell. Cell-agnostic by design -- cellId is just
+   * whatever key that cell's value is stored under (see FeatureRow.customBg
+   * doc comment), so the same handler covers tree/model/component/quickset/
+   * epic/notes cells without each needing its own paint logic. */
+  function paintCell(rowId: number, cellId: string) {
+    if (!editMode || !paintColor) return;
+    updateTabData((prev) => ({
+      ...prev,
+      rows: prev.rows.map((r) => {
+        if (r.row !== rowId) return r;
+        const nextBg = { ...r.customBg };
+        if (paintColor === ERASE_FILL) delete nextBg[cellId];
+        else nextBg[cellId] = paintColor;
+        return { ...r, customBg: nextBg };
+      }),
+    }));
+  }
+
+  /** Drag-to-resize for a column header. Reads the header cell's own
+   * current rendered width as the drag start point (rather than tracking
+   * it separately) so it works whether or not the column already has a
+   * stored width -- first drag captures its natural content-driven size. */
+  function startColumnResize(e: React.MouseEvent, colId: string) {
+    e.preventDefault();
+    e.stopPropagation();
+    const th = (e.currentTarget as HTMLElement).closest("th");
+    const startWidth = th?.getBoundingClientRect().width ?? 120;
+    const startX = e.clientX;
+
+    function onMove(ev: MouseEvent) {
+      const next = Math.max(32, Math.round(startWidth + (ev.clientX - startX)));
+      setColWidths((prev) => ({ ...prev, [colId]: next }));
+    }
+    function onUp() {
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    }
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  }
+
+  function colWidthStyle(colId: string): React.CSSProperties {
+    const w = colWidths[colId];
+    if (!w) return {};
+    return { width: w, minWidth: w, maxWidth: w };
   }
 
   function setQuickSetCell(rowId: number, key: string, value: string) {
@@ -507,19 +627,294 @@ export function IaDocumentationWorkspace() {
     }
   }
 
+  /**
+   * Exports the currently-visible grid as an .xls file that mirrors what's
+   * on screen -- same tree/model/component/quickset/epic/notes columns,
+   * same merged header bands, same fill colors (including user-painted
+   * cells) -- not just a flat data dump. The community `xlsx` package can't
+   * write cell styles/merges, so this builds a real HTML <table> (with the
+   * standard Microsoft Office HTML markers) and downloads it as .xls,
+   * which Excel opens natively with full color/merge fidelity -- the same
+   * technique Excel's own "Save as Web Page" used.
+   */
   function exportToXlsx() {
     if (!tabData) return;
-    const header = ["Feature", "Version", "Source", ...visibleModels.map((m) => m.key)];
-    const data = visibleRows.map((row) => [
-      featurePath(row),
-      row.version ?? "",
-      row.source ?? "",
-      ...visibleModels.map((m) => row.models?.[m.key] ?? ""),
-    ]);
-    const ws = XLSX.utils.aoa_to_sheet([header, ...data]);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, tabData.tab.slice(0, 31));
-    XLSX.writeFile(wb, `${tabData.tab}.xlsx`);
+
+    const esc = (v: unknown) =>
+      String(v ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+
+    const styleAttr = (props: Record<string, string | number | null | undefined>) => {
+      const parts = Object.entries(props)
+        .filter(([, v]) => v !== undefined && v !== null && v !== "")
+        .map(([k, v]) => `${k}:${v}`);
+      return parts.length ? ` style="${parts.join(";")}"` : "";
+    };
+
+    const th = (
+      content: string,
+      opts: {
+        rowSpan?: number;
+        colSpan?: number;
+        bg?: string | null;
+        color?: string;
+        align?: string;
+      } = {}
+    ) => {
+      const attrs = [
+        opts.rowSpan && opts.rowSpan > 1 ? ` rowspan="${opts.rowSpan}"` : "",
+        opts.colSpan && opts.colSpan > 1 ? ` colspan="${opts.colSpan}"` : "",
+        styleAttr({
+          "background-color": opts.bg ?? undefined,
+          color: opts.color,
+          "font-weight": "bold",
+          "text-align": opts.align ?? "center",
+          border: "1px solid #9ca3af",
+          padding: "4px 8px",
+          "white-space": "nowrap",
+        }),
+      ].join("");
+      return `<th${attrs}>${esc(content)}</th>`;
+    };
+
+    const td = (
+      content: string,
+      opts: { bg?: string | null; color?: string; bold?: boolean; align?: string } = {}
+    ) => {
+      const attrs = styleAttr({
+        "background-color": opts.bg ?? undefined,
+        color: opts.color,
+        "font-weight": opts.bold ? "bold" : undefined,
+        "text-align": opts.align ?? "left",
+        border: "1px solid #d1d5db",
+        padding: "3px 8px",
+        "white-space": "nowrap",
+      });
+      return `<td${attrs}>${esc(content)}</td>`;
+    };
+
+    let theadHtml = "";
+    let tbodyHtml = "";
+
+    if (hasOriginalStyle) {
+      const headerRowsHtml = headerRowKeys.map((rowKey, rowIndex) => {
+        const remainingRows = headerRowKeys.length - rowIndex;
+        const cells: string[] = [];
+
+        if (rowIndex === 0 && nameRowIndex > 0) {
+          treeLabels.forEach(() =>
+            cells.push(th("", { rowSpan: nameRowIndex, bg: tabData.headerStyle?.treeHeaderFill }))
+          );
+        }
+        if (rowKey === "name") {
+          treeLabels.forEach((label) =>
+            cells.push(
+              th(label, {
+                rowSpan: headerRowKeys.length - nameRowIndex,
+                bg: tabData.headerStyle?.treeHeaderFill,
+                color: tabData.headerStyle?.treeHeaderFill ? "#fff" : undefined,
+                align: "left",
+              })
+            )
+          );
+        }
+        if (rowKey === "family") {
+          groupConsecutive(visibleModels, (m) => `${m.family ?? ""}|${m.familyFill ?? ""}`).forEach((group) =>
+            cells.push(
+              th(group.items[0].family ?? "", {
+                colSpan: group.items.length,
+                bg: group.items[0].familyFill ?? tabData.headerStyle?.modelHeaderFill,
+                color: "#fff",
+              })
+            )
+          );
+        }
+        if (rowKey === "quickKey") {
+          groupConsecutive(visibleModels, (m) => `${m.family ?? ""}|${m.familyFill ?? ""}`).forEach((group) =>
+            cells.push(
+              th("", {
+                colSpan: group.items.length,
+                bg: group.items[0].familyFill ?? tabData.headerStyle?.modelHeaderFill,
+              })
+            )
+          );
+          tabData.quickSetColumns.forEach((qs) =>
+            cells.push(th(qs.key, { bg: tabData.headerStyle?.quickSetsBandFill, color: "#fff" }))
+          );
+        }
+        if (rowKey === "segment") {
+          groupConsecutive(visibleModels, (m) => `${m.segment ?? ""}|${m.segmentFill ?? ""}`).forEach((group) =>
+            cells.push(
+              th(group.items[0].segment ?? "", {
+                colSpan: group.items.length,
+                bg: group.items[0].segmentFill ?? tabData.headerStyle?.modelSegmentFill,
+                color: "#fff",
+              })
+            )
+          );
+          tabData.quickSetColumns.forEach((qs) =>
+            cells.push(th(qs.line ?? "", { bg: qs.lineFill, color: "#fff" }))
+          );
+        }
+        if (rowKey === "name") {
+          visibleModels.forEach((m) =>
+            cells.push(
+              th(m.key, { bg: m.familyFill ?? tabData.headerStyle?.modelHeaderFill, color: "#fff" })
+            )
+          );
+          tabData.componentColumns?.forEach((label) =>
+            cells.push(
+              th(label, {
+                rowSpan: remainingRows,
+                bg: tabData.headerStyle?.treeHeaderFill,
+                color: tabData.headerStyle?.treeHeaderFill ? "#fff" : undefined,
+              })
+            )
+          );
+          tabData.quickSetColumns.forEach((qs) =>
+            cells.push(
+              th(qs.model ?? "", { rowSpan: remainingRows, bg: tabData.headerStyle?.quickSetsBandFill, color: "#fff" })
+            )
+          );
+        }
+        if (rowKey === "engine") {
+          visibleModels.forEach((m) =>
+            cells.push(th(m.engineClass ?? "", { bg: tabData.headerStyle?.statusRowFill }))
+          );
+        }
+        if (rowKey === "status") {
+          visibleModels.forEach((m) =>
+            cells.push(th(m.status ?? "", { bg: tabData.headerStyle?.statusRowFill }))
+          );
+        }
+        if (rowIndex === 0 && hasComponents) {
+          cells.push(
+            th(tabData.headerStyle?.componentsBandLabel ?? "Components", {
+              colSpan: tabData.componentColumns!.length,
+              rowSpan: nameRowIndex,
+              bg: tabData.headerStyle?.componentsBandFill,
+              color: "#fff",
+            })
+          );
+        }
+        if (rowIndex === 0 && hasQuickSets) {
+          cells.push(
+            th(tabData.headerStyle?.quickSetsBandLabel ?? "Quick Sets", {
+              colSpan: tabData.quickSetColumns.length,
+              bg: tabData.headerStyle?.quickSetsBandFill,
+              color: "#fff",
+            })
+          );
+        }
+        if (rowIndex === 0 && hasEpicColumn) {
+          cells.push(
+            th(tabData.headerStyle?.epicLabel ?? "Epic", {
+              rowSpan: headerRowKeys.length,
+              bg: tabData.headerStyle?.epicBandFill,
+              color: "#fff",
+            })
+          );
+        }
+        if (rowIndex === 0 && hasNotesColumn) {
+          cells.push(th(tabData.headerStyle?.notesLabel ?? "Notes", { rowSpan: headerRowKeys.length }));
+        }
+
+        return `<tr>${cells.join("")}</tr>`;
+      });
+      theadHtml = `<thead>${headerRowsHtml.join("")}</thead>`;
+
+      const bodyRowsHtml = visibleRows.map((row) => {
+        const rowRecord = row as unknown as Record<string, string | number | null | undefined>;
+        const cells: string[] = [];
+
+        tabData.featureTreeColumns.forEach((field) => {
+          const cellStyleInfo = row.cellStyle?.[field];
+          cells.push(
+            td(String(rowRecord[field] ?? ""), {
+              bg: row.customBg?.[field] ?? cellStyleInfo?.fill ?? undefined,
+              bold: cellStyleInfo?.bold,
+            })
+          );
+        });
+        visibleModels.forEach((m) => {
+          const value = row.models?.[m.key];
+          const cellId = `models.${m.key}`;
+          cells.push(
+            td(value ?? "", {
+              bg: row.customBg?.[cellId],
+              color: value ? STATUS_HEX[value] : undefined,
+              align: "center",
+            })
+          );
+        });
+        tabData.componentColumns?.forEach((label) => {
+          const cellId = `componentSetting.${label}`;
+          cells.push(td(row.componentSetting?.[label] ?? "", { bg: row.customBg?.[cellId] }));
+        });
+        tabData.quickSetColumns.forEach((qs) => {
+          const cellId = `quickSets.${qs.key}`;
+          cells.push(td(row.quickSets?.[qs.key] ?? "", { bg: row.customBg?.[cellId] }));
+        });
+        if (hasEpicColumn) cells.push(td(row.epicStory ?? "", { bg: row.customBg?.epicStory }));
+        if (hasNotesColumn) cells.push(td(row.designNotes ?? "", { bg: row.customBg?.designNotes }));
+
+        return `<tr>${cells.join("")}</tr>`;
+      });
+      tbodyHtml = `<tbody>${bodyRowsHtml.join("")}</tbody>`;
+    } else {
+      const headerCells = [
+        th("Feature", { align: "left" }),
+        th("Ver", { align: "left" }),
+        ...visibleModels.map((m) => th(m.key)),
+      ];
+      theadHtml = `<thead><tr>${headerCells.join("")}</tr></thead>`;
+
+      const bodyRowsHtml = visibleRows.map((row) => {
+        const cells = [
+          td(featurePath(row), { bg: row.customBg?.level2 }),
+          td(row.version != null ? String(row.version) : "", { bg: row.customBg?.version }),
+          ...visibleModels.map((m) => {
+            const value = row.models?.[m.key];
+            const cellId = `models.${m.key}`;
+            return td(value ?? "", {
+              bg: row.customBg?.[cellId],
+              color: value ? STATUS_HEX[value] : undefined,
+              align: "center",
+            });
+          }),
+        ];
+        return `<tr>${cells.join("")}</tr>`;
+      });
+      tbodyHtml = `<tbody>${bodyRowsHtml.join("")}</tbody>`;
+    }
+
+    const sheetName = esc(tabData.tab.replace(/[\\/*?:[\]]/g, "").slice(0, 31) || "Sheet1");
+    const doc = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="UTF-8">
+<!--[if gte mso 9]><xml>
+<x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+<x:Name>${sheetName}</x:Name>
+<x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook>
+</xml><![endif]-->
+<style>table { border-collapse: collapse; font-family: Calibri, Arial, sans-serif; font-size: 11pt; }</style>
+</head>
+<body><table>${theadHtml}${tbodyHtml}</table></body>
+</html>`;
+
+    const blob = new Blob(["﻿" + doc], { type: "application/vnd.ms-excel" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${tabData.tab}.xls`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
   function toggleModelSelected(key: string) {
@@ -697,139 +1092,273 @@ export function IaDocumentationWorkspace() {
 
   return (
     <div className="flex min-w-0 flex-col gap-4">
-      {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-2 rounded-2xl bg-surface p-3 shadow-sm">
-        <select
-          value={activeTab ?? ""}
-          onChange={(e) => setActiveTab(e.target.value)}
-          className="rounded-lg border border-black/10 bg-panel px-3 py-1.5 text-sm font-medium text-ink"
-        >
-          {schema.tabs.map((tab) => (
-            <option key={tab.name} value={tab.name}>
-              {tab.name}
-            </option>
-          ))}
-        </select>
-
-        <input
-          value={rowSearch}
-          onChange={(e) => setRowSearch(e.target.value)}
-          placeholder="Search rows / features…"
-          className="min-w-[200px] rounded-lg border border-black/10 px-3 py-1.5 text-sm"
-        />
-
-        <input
-          value={modelFilter}
-          onChange={(e) => setModelFilter(e.target.value)}
-          placeholder="Filter models…"
-          disabled={compareMode}
-          className="rounded-lg border border-black/10 px-3 py-1.5 text-sm disabled:opacity-50"
-        />
-
-        <button
-          onClick={() => setCompareMode((v) => !v)}
-          className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
-            compareMode ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
-          }`}
-        >
-          Compare {selectedModels.size > 0 ? `(${selectedModels.size})` : ""}
-        </button>
-
-        {filtersActive && (
-          <button
-            onClick={resetFilters}
-            className="rounded-lg bg-panel px-3 py-1.5 text-sm font-medium text-ink hover:bg-black/5"
+      {/* Toolbar -- grouped into clusters (view / edit / zoom / actions),
+          separated by hairline dividers so it reads like a proper app
+          toolbar instead of one long undifferentiated row. */}
+      <div className="flex flex-wrap items-center gap-1.5 rounded-2xl bg-surface p-2.5 shadow-sm">
+        {/* View / filter group */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          <select
+            value={activeTab ?? ""}
+            onChange={(e) => setActiveTab(e.target.value)}
+            className="rounded-lg border border-black/10 bg-panel px-3 py-1.5 text-sm font-medium text-ink"
           >
-            Reset
+            {schema.tabs.map((tab) => (
+              <option key={tab.name} value={tab.name}>
+                {tab.name}
+              </option>
+            ))}
+          </select>
+
+          <input
+            value={rowSearch}
+            onChange={(e) => setRowSearch(e.target.value)}
+            placeholder="Search rows / features…"
+            className="min-w-[180px] rounded-lg border border-black/10 px-3 py-1.5 text-sm"
+          />
+
+          <input
+            value={modelFilter}
+            onChange={(e) => setModelFilter(e.target.value)}
+            placeholder="Filter models…"
+            disabled={compareMode}
+            className="rounded-lg border border-black/10 px-3 py-1.5 text-sm disabled:opacity-50"
+          />
+
+          <button
+            onClick={() => setCompareMode((v) => !v)}
+            className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
+              compareMode ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
+            }`}
+          >
+            Compare {selectedModels.size > 0 ? `(${selectedModels.size})` : ""}
+          </button>
+
+          {filtersActive && (
+            <button
+              onClick={resetFilters}
+              className="rounded-lg bg-panel px-3 py-1.5 text-sm font-medium text-ink hover:bg-black/5"
+            >
+              Reset
+            </button>
+          )}
+        </div>
+
+        <div className="mx-1 h-6 w-px shrink-0 bg-black/10" />
+
+        {/* Edit group -- +Row/+Column/Delete/Fill/Save only appear once
+            Editing is on, so the toolbar stays uncluttered until you
+            actually need those actions. */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          <button
+            onClick={() =>
+              setEditMode((v) => {
+                if (v) {
+                  setPaintColor(null);
+                  setShowFillPalette(false);
+                }
+                return !v;
+              })
+            }
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
+              editMode ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
+            }`}
+          >
+            <Pencil size={14} />
+            {editMode ? "Editing" : "Edit"}
+          </button>
+
+          {editMode && (
+            <>
+              <button
+                onClick={() => setShowAddRow((v) => !v)}
+                className="rounded-lg bg-panel px-3 py-1.5 text-sm font-medium text-ink hover:bg-black/5"
+              >
+                + Row
+              </button>
+              <button
+                onClick={() => setShowAddCol((v) => !v)}
+                className="rounded-lg bg-panel px-3 py-1.5 text-sm font-medium text-ink hover:bg-black/5"
+              >
+                + Column
+              </button>
+              <button
+                onClick={deleteSelectedRows}
+                disabled={selectedRows.size === 0}
+                className="flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-40 dark:bg-red-950/40 dark:text-red-400"
+              >
+                <Trash2 size={14} />
+                Rows {selectedRows.size > 0 ? `(${selectedRows.size})` : ""}
+              </button>
+              <button
+                onClick={deleteSelectedColumns}
+                disabled={selectedModels.size === 0}
+                className="flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-40 dark:bg-red-950/40 dark:text-red-400"
+              >
+                <Trash2 size={14} />
+                Columns {selectedModels.size > 0 ? `(${selectedModels.size})` : ""}
+              </button>
+
+              <div className="relative">
+                <button
+                  onClick={() => setShowFillPalette((v) => !v)}
+                  title="Fill color"
+                  className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
+                    paintColor ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
+                  }`}
+                >
+                  <PaintBucket size={14} />
+                  <span
+                    className="h-3 w-3 rounded-sm border border-black/20"
+                    style={{
+                      backgroundColor:
+                        paintColor && paintColor !== ERASE_FILL ? paintColor : "transparent",
+                    }}
+                  />
+                </button>
+                {showFillPalette && (
+                  <div className="absolute left-0 top-full z-40 mt-1 grid w-40 grid-cols-6 gap-1 rounded-lg border border-black/10 bg-surface p-2 shadow-lg">
+                    {FILL_PALETTE.map((color) => (
+                      <button
+                        key={color}
+                        title={color}
+                        onClick={() => {
+                          setPaintColor(color);
+                          setShowFillPalette(false);
+                        }}
+                        className="h-5 w-5 rounded border border-black/10"
+                        style={{ backgroundColor: color }}
+                      />
+                    ))}
+                    <input
+                      type="color"
+                      title="Custom color"
+                      onChange={(e) => {
+                        setPaintColor(e.target.value);
+                        setShowFillPalette(false);
+                      }}
+                      className="h-5 w-5 cursor-pointer rounded border border-black/10 p-0"
+                    />
+                    <button
+                      title="No fill (click cells to clear their color)"
+                      onClick={() => {
+                        setPaintColor(ERASE_FILL);
+                        setShowFillPalette(false);
+                      }}
+                      className="flex h-5 w-5 items-center justify-center rounded border border-black/10"
+                    >
+                      <Ban size={12} className="text-muted" />
+                    </button>
+                    {paintColor && (
+                      <button
+                        onClick={() => {
+                          setPaintColor(null);
+                          setShowFillPalette(false);
+                        }}
+                        className="col-span-6 mt-1 rounded bg-panel py-1 text-[11px] font-medium text-ink hover:bg-black/5"
+                      >
+                        Stop painting
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+              {paintColor && (
+                <span className="text-xs text-muted">
+                  {paintColor === ERASE_FILL ? "Click cells to clear fill" : "Click cells to fill"}
+                </span>
+              )}
+
+              <button
+                onClick={saveChanges}
+                disabled={!dirty || saving}
+                className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-40"
+              >
+                <Save size={14} />
+                {saving ? "Saving…" : dirty ? "Save changes" : "Saved"}
+              </button>
+            </>
+          )}
+        </div>
+
+        <div className="mx-1 h-6 w-px shrink-0 bg-black/10" />
+
+        {/* Zoom group */}
+        <div className="flex items-center gap-1 rounded-lg bg-panel px-1 py-1">
+          <button
+            onClick={() => setZoom((z) => Math.max(ZOOM_MIN, z - ZOOM_STEP))}
+            disabled={zoom <= ZOOM_MIN}
+            title="Zoom out"
+            className="rounded-md p-1.5 text-ink hover:bg-black/5 disabled:opacity-40"
+          >
+            <ZoomOut size={14} />
+          </button>
+          <button
+            onClick={() => setZoom(100)}
+            title="Reset zoom"
+            className="w-11 text-center text-xs font-medium text-ink hover:underline"
+          >
+            {zoom}%
+          </button>
+          <button
+            onClick={() => setZoom((z) => Math.min(ZOOM_MAX, z + ZOOM_STEP))}
+            disabled={zoom >= ZOOM_MAX}
+            title="Zoom in"
+            className="rounded-md p-1.5 text-ink hover:bg-black/5 disabled:opacity-40"
+          >
+            <ZoomIn size={14} />
+          </button>
+        </div>
+
+        {Object.keys(colWidths).length > 0 && (
+          <button
+            onClick={() => setColWidths({})}
+            title="Reset all manually-resized column widths"
+            className="rounded-lg px-2 py-1.5 text-xs font-medium text-muted hover:bg-black/5 hover:text-ink"
+          >
+            Reset widths
           </button>
         )}
 
-        <button
-          onClick={() => setEditMode((v) => !v)}
-          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
-            editMode ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
-          }`}
-        >
-          <Pencil size={14} />
-          {editMode ? "Editing" : "Edit"}
-        </button>
+        <div className="mx-1 h-6 w-px shrink-0 bg-black/10" />
 
-        {editMode && (
-          <>
-            <button
-              onClick={() => setShowAddRow((v) => !v)}
-              className="rounded-lg bg-panel px-3 py-1.5 text-sm font-medium text-ink hover:bg-black/5"
-            >
-              + Row
-            </button>
-            <button
-              onClick={() => setShowAddCol((v) => !v)}
-              className="rounded-lg bg-panel px-3 py-1.5 text-sm font-medium text-ink hover:bg-black/5"
-            >
-              + Column
-            </button>
-            <button
-              onClick={deleteSelectedRows}
-              disabled={selectedRows.size === 0}
-              className="flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-40 dark:bg-red-950/40 dark:text-red-400"
-            >
-              <Trash2 size={14} />
-              Rows {selectedRows.size > 0 ? `(${selectedRows.size})` : ""}
-            </button>
-            <button
-              onClick={deleteSelectedColumns}
-              disabled={selectedModels.size === 0}
-              className="flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-40 dark:bg-red-950/40 dark:text-red-400"
-            >
-              <Trash2 size={14} />
-              Columns {selectedModels.size > 0 ? `(${selectedModels.size})` : ""}
-            </button>
-            <button
-              onClick={saveChanges}
-              disabled={!dirty || saving}
-              className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-40"
-            >
-              <Save size={14} />
-              {saving ? "Saving…" : dirty ? "Save changes" : "Saved"}
-            </button>
-          </>
-        )}
+        {/* Export / panels group */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          <button
+            onClick={exportToXlsx}
+            className="flex items-center gap-1.5 rounded-lg bg-panel px-3 py-1.5 text-sm font-medium text-ink hover:bg-black/5"
+          >
+            <Download size={14} />
+            Excel
+          </button>
 
-        <button
-          onClick={exportToXlsx}
-          className="flex items-center gap-1.5 rounded-lg bg-panel px-3 py-1.5 text-sm font-medium text-ink hover:bg-black/5"
-        >
-          <Download size={14} />
-          Excel
-        </button>
+          <button
+            onClick={() => setShowAudit((v) => !v)}
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
+              showAudit ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
+            }`}
+          >
+            <History size={14} />
+            Audit Log {auditLog.length > 0 ? `(${auditLog.length})` : ""}
+          </button>
 
-        <button
-          onClick={() => setShowAudit((v) => !v)}
-          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
-            showAudit ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
-          }`}
-        >
-          <History size={14} />
-          Audit Log {auditLog.length > 0 ? `(${auditLog.length})` : ""}
-        </button>
-
-        <button
-          onClick={() => setCopilotOpen((v) => !v)}
-          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
-            copilotOpen ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
-          }`}
-        >
-          <Bot size={14} />
-          Co-pilot
-        </button>
+          <button
+            onClick={() => setCopilotOpen((v) => !v)}
+            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
+              copilotOpen ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
+            }`}
+          >
+            <Bot size={14} />
+            Co-pilot
+          </button>
+        </div>
 
         {tabData && (
-          <span className="ml-auto text-xs text-muted">
+          <span className="ml-auto whitespace-nowrap text-xs text-muted">
             {filtersActive
               ? `${visibleRows.length} of ${tabData.rows.length} rows`
               : `${tabData.rows.length} rows`}{" "}
             · {visibleModels.length} of {tabData.models.length} models
-            {/* <code className="rounded bg-panel px-1 py-0.5">{tabData.sourceFile}</code> */}
           </span>
         )}
       </div>
@@ -954,16 +1483,16 @@ export function IaDocumentationWorkspace() {
               <table className="w-full border-collapse text-left text-xs">
                 <thead>
                   <tr>
-                    <th className="sticky top-0 whitespace-nowrap border-b border-black/10 bg-surface px-2 py-2 font-semibold text-ink">
+                    <th className="sticky top-0 whitespace-nowrap border-b border-black/10 bg-surface px-1.5 py-1 font-semibold text-ink">
                       Time
                     </th>
-                    <th className="sticky top-0 whitespace-nowrap border-b border-black/10 bg-surface px-2 py-2 font-semibold text-ink">
+                    <th className="sticky top-0 whitespace-nowrap border-b border-black/10 bg-surface px-1.5 py-1 font-semibold text-ink">
                       User
                     </th>
-                    <th className="sticky top-0 whitespace-nowrap border-b border-black/10 bg-surface px-2 py-2 font-semibold text-ink">
+                    <th className="sticky top-0 whitespace-nowrap border-b border-black/10 bg-surface px-1.5 py-1 font-semibold text-ink">
                       Type
                     </th>
-                    <th className="sticky top-0 border-b border-black/10 bg-surface px-2 py-2 font-semibold text-ink">
+                    <th className="sticky top-0 border-b border-black/10 bg-surface px-1.5 py-1 font-semibold text-ink">
                       Change
                     </th>
                   </tr>
@@ -1008,7 +1537,10 @@ export function IaDocumentationWorkspace() {
           ) : visibleRows.length === 0 ? (
             <p className="p-3 text-sm text-muted">No rows match &quot;{rowSearch}&quot;.</p>
           ) : hasOriginalStyle ? (
-            <div className="h-[70vh] w-full overflow-auto rounded-xl">
+            <div
+              className="h-[70vh] w-full overflow-auto rounded-xl"
+              style={{ zoom: `${zoom}%` }}
+            >
               <table className="w-full border-collapse text-left text-xs">
                 <thead>
                   {headerRowKeys.map((rowKey, rowIndex) => {
@@ -1022,7 +1554,7 @@ export function IaDocumentationWorkspace() {
                             <th
                               key={`tree-filler-${i}`}
                               rowSpan={nameRowIndex}
-                              className="whitespace-nowrap px-2 py-2 font-semibold"
+                              className="whitespace-nowrap px-1.5 py-1 font-semibold"
                               style={{
                                 backgroundColor: tabData.headerStyle?.treeHeaderFill ?? undefined,
                                 position: "sticky",
@@ -1034,40 +1566,45 @@ export function IaDocumentationWorkspace() {
                           ))}
 
                         {rowKey === "name" &&
-                          treeLabels.map((label, i) => (
-                            <th
-                              key={`tree-${i}`}
-                              rowSpan={headerRowKeys.length - nameRowIndex}
-                              className="whitespace-nowrap border-b border-black/10 px-2 py-2 align-top font-semibold"
-                              style={{
-                                backgroundColor: tabData.headerStyle?.treeHeaderFill ?? undefined,
-                                color: tabData.headerStyle?.treeHeaderFill ? "#fff" : undefined,
-                                position: "sticky",
-                                top,
-                                left: i === 0 ? 0 : undefined,
-                                zIndex: i === 0 ? 30 : 20,
-                              }}
-                            >
-                              {i === 0 ? (
-                                <div className="flex items-center gap-1">
-                                  {editMode && (
-                                    <input
-                                      type="checkbox"
-                                      checked={
-                                        visibleRows.length > 0 &&
-                                        visibleRows.every((r) => selectedRows.has(r.row))
-                                      }
-                                      onChange={toggleSelectAllVisibleRows}
-                                      title="Select all visible rows"
-                                    />
-                                  )}
-                                  {label}
-                                </div>
-                              ) : (
-                                label
-                              )}
-                            </th>
-                          ))}
+                          treeLabels.map((label, i) => {
+                            const colId = tabData.featureTreeColumns[i];
+                            return (
+                              <th
+                                key={`tree-${i}`}
+                                rowSpan={headerRowKeys.length - nameRowIndex}
+                                className="relative whitespace-nowrap border-b border-black/10 px-1.5 py-1 align-top font-semibold"
+                                style={{
+                                  backgroundColor: tabData.headerStyle?.treeHeaderFill ?? undefined,
+                                  color: tabData.headerStyle?.treeHeaderFill ? "#fff" : undefined,
+                                  position: "sticky",
+                                  top,
+                                  left: i === 0 ? 0 : undefined,
+                                  zIndex: i === 0 ? 30 : 20,
+                                  ...colWidthStyle(colId),
+                                }}
+                              >
+                                {i === 0 ? (
+                                  <div className="flex items-center gap-1">
+                                    {editMode && (
+                                      <input
+                                        type="checkbox"
+                                        checked={
+                                          visibleRows.length > 0 &&
+                                          visibleRows.every((r) => selectedRows.has(r.row))
+                                        }
+                                        onChange={toggleSelectAllVisibleRows}
+                                        title="Select all visible rows"
+                                      />
+                                    )}
+                                    {label}
+                                  </div>
+                                ) : (
+                                  label
+                                )}
+                                <ColResizeHandle colId={colId} onResize={startColumnResize} />
+                              </th>
+                            );
+                          })}
 
                         {rowKey === "family" &&
                           groupConsecutive(visibleModels, (m) => `${m.family ?? ""}|${m.familyFill ?? ""}`).map(
@@ -1075,7 +1612,7 @@ export function IaDocumentationWorkspace() {
                               <th
                                 key={`fam-${gi}`}
                                 colSpan={group.items.length}
-                                className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                                className="whitespace-nowrap border-b border-black/10 px-1.5 py-1 text-center font-semibold"
                                 style={{
                                   backgroundColor:
                                     group.items[0].familyFill ?? tabData.headerStyle?.modelHeaderFill ?? undefined,
@@ -1096,7 +1633,7 @@ export function IaDocumentationWorkspace() {
                               <th
                                 key={`famcont-${gi}`}
                                 colSpan={group.items.length}
-                                className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                                className="whitespace-nowrap border-b border-black/10 px-1.5 py-1 text-center font-semibold"
                                 style={{
                                   backgroundColor:
                                     group.items[0].familyFill ?? tabData.headerStyle?.modelHeaderFill ?? undefined,
@@ -1111,7 +1648,7 @@ export function IaDocumentationWorkspace() {
                           tabData.quickSetColumns.map((qs) => (
                             <th
                               key={`qk-${qs.key}`}
-                              className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                              className="whitespace-nowrap border-b border-black/10 px-1.5 py-1 text-center font-semibold"
                               style={{
                                 backgroundColor: tabData.headerStyle?.quickSetsBandFill ?? undefined,
                                 color: "#fff",
@@ -1130,7 +1667,7 @@ export function IaDocumentationWorkspace() {
                               <th
                                 key={`seg-${gi}`}
                                 colSpan={group.items.length}
-                                className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                                className="whitespace-nowrap border-b border-black/10 px-1.5 py-1 text-center font-semibold"
                                 style={{
                                   backgroundColor:
                                     group.items[0].segmentFill ?? tabData.headerStyle?.modelSegmentFill ?? undefined,
@@ -1148,7 +1685,7 @@ export function IaDocumentationWorkspace() {
                           tabData.quickSetColumns.map((qs) => (
                             <th
                               key={`line-${qs.key}`}
-                              className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                              className="whitespace-nowrap border-b border-black/10 px-1.5 py-1 text-center font-semibold"
                               style={{
                                 backgroundColor: qs.lineFill ?? undefined,
                                 color: "#fff",
@@ -1166,7 +1703,7 @@ export function IaDocumentationWorkspace() {
                             <th
                               key={`name-${m.key}`}
                               title={`${m.family ?? ""} / ${m.segment ?? ""} / ${m.engineClass ?? ""} (${m.status ?? ""})`}
-                              className="whitespace-nowrap border-b border-black/10 px-2 py-2 font-semibold"
+                              className="relative whitespace-nowrap border-b border-black/10 px-1.5 py-1 font-semibold"
                               style={{
                                 backgroundColor:
                                   m.familyFill ?? tabData.headerStyle?.modelHeaderFill ?? undefined,
@@ -1174,6 +1711,7 @@ export function IaDocumentationWorkspace() {
                                 position: "sticky",
                                 top,
                                 zIndex: 20,
+                                ...colWidthStyle(`models.${m.key}`),
                               }}
                             >
                               <div className="flex items-center gap-1">
@@ -1185,6 +1723,7 @@ export function IaDocumentationWorkspace() {
                                 />
                                 {m.key}
                               </div>
+                              <ColResizeHandle colId={`models.${m.key}`} onResize={startColumnResize} />
                             </th>
                           ))}
                         {rowKey === "name" &&
@@ -1192,16 +1731,21 @@ export function IaDocumentationWorkspace() {
                             <th
                               key={`complabel-${label}`}
                               rowSpan={remainingRows}
-                              className="whitespace-nowrap border-b border-black/10 px-2 py-2 align-top font-semibold"
+                              className="relative whitespace-nowrap border-b border-black/10 px-1.5 py-1 align-top font-semibold"
                               style={{
                                 backgroundColor: tabData.headerStyle?.treeHeaderFill ?? undefined,
                                 color: tabData.headerStyle?.treeHeaderFill ? "#fff" : undefined,
                                 position: "sticky",
                                 top,
                                 zIndex: 20,
+                                ...colWidthStyle(`componentSetting.${label}`),
                               }}
                             >
                               {label}
+                              <ColResizeHandle
+                                colId={`componentSetting.${label}`}
+                                onResize={startColumnResize}
+                              />
                             </th>
                           ))}
                         {rowKey === "name" &&
@@ -1209,16 +1753,18 @@ export function IaDocumentationWorkspace() {
                             <th
                               key={`qm-${qs.key}`}
                               rowSpan={remainingRows}
-                              className="whitespace-nowrap border-b border-black/10 px-2 py-2 align-top font-semibold"
+                              className="relative whitespace-nowrap border-b border-black/10 px-1.5 py-1 align-top font-semibold"
                               style={{
                                 backgroundColor: tabData.headerStyle?.quickSetsBandFill ?? undefined,
                                 color: "#fff",
                                 position: "sticky",
                                 top,
                                 zIndex: 20,
+                                ...colWidthStyle(`quickSets.${qs.key}`),
                               }}
                             >
                               {qs.model ?? ""}
+                              <ColResizeHandle colId={`quickSets.${qs.key}`} onResize={startColumnResize} />
                             </th>
                           ))}
 
@@ -1226,7 +1772,7 @@ export function IaDocumentationWorkspace() {
                           visibleModels.map((m) => (
                             <th
                               key={`eng-${m.key}`}
-                              className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                              className="whitespace-nowrap border-b border-black/10 px-1.5 py-1 text-center font-semibold"
                               style={{
                                 backgroundColor: tabData.headerStyle?.statusRowFill ?? undefined,
                                 position: "sticky",
@@ -1242,7 +1788,7 @@ export function IaDocumentationWorkspace() {
                           visibleModels.map((m) => (
                             <th
                               key={`stat-${m.key}`}
-                              className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                              className="whitespace-nowrap border-b border-black/10 px-1.5 py-1 text-center font-semibold"
                               style={{
                                 backgroundColor: tabData.headerStyle?.statusRowFill ?? undefined,
                                 position: "sticky",
@@ -1258,7 +1804,7 @@ export function IaDocumentationWorkspace() {
                           <th
                             colSpan={tabData.componentColumns!.length}
                             rowSpan={nameRowIndex}
-                            className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                            className="whitespace-nowrap border-b border-black/10 px-1.5 py-1 text-center font-semibold"
                             style={{
                               backgroundColor: tabData.headerStyle?.componentsBandFill ?? undefined,
                               color: "#fff",
@@ -1274,7 +1820,7 @@ export function IaDocumentationWorkspace() {
                         {rowIndex === 0 && hasQuickSets && (
                           <th
                             colSpan={tabData.quickSetColumns.length}
-                            className="whitespace-nowrap border-b border-black/10 px-2 py-2 text-center font-semibold"
+                            className="whitespace-nowrap border-b border-black/10 px-1.5 py-1 text-center font-semibold"
                             style={{
                               backgroundColor: tabData.headerStyle?.quickSetsBandFill ?? undefined,
                               color: "#fff",
@@ -1290,30 +1836,34 @@ export function IaDocumentationWorkspace() {
                         {rowIndex === 0 && hasEpicColumn && (
                           <th
                             rowSpan={headerRowKeys.length}
-                            className="whitespace-nowrap border-b border-black/10 px-2 py-2 align-bottom font-semibold"
+                            className="relative whitespace-nowrap border-b border-black/10 px-1.5 py-1 align-bottom font-semibold"
                             style={{
                               backgroundColor: tabData.headerStyle?.epicBandFill ?? undefined,
                               color: "#fff",
                               position: "sticky",
                               top: 0,
                               zIndex: 20,
+                              ...colWidthStyle("epicStory"),
                             }}
                           >
                             {tabData.headerStyle?.epicLabel ?? "Epic"}
+                            <ColResizeHandle colId="epicStory" onResize={startColumnResize} />
                           </th>
                         )}
 
                         {rowIndex === 0 && hasNotesColumn && (
                           <th
                             rowSpan={headerRowKeys.length}
-                            className="whitespace-nowrap border-b border-black/10 px-2 py-2 align-bottom font-semibold"
+                            className="relative whitespace-nowrap border-b border-black/10 px-1.5 py-1 align-bottom font-semibold"
                             style={{
                               position: "sticky",
                               top: 0,
                               zIndex: 20,
+                              ...colWidthStyle("designNotes"),
                             }}
                           >
                             {tabData.headerStyle?.notesLabel ?? "Notes"}
+                            <ColResizeHandle colId="designNotes" onResize={startColumnResize} />
                           </th>
                         )}
                       </tr>
@@ -1337,13 +1887,17 @@ export function IaDocumentationWorkspace() {
                           return (
                             <td
                               key={field}
-                              className="whitespace-nowrap border-b border-black/5 px-2 py-1.5 text-ink"
+                              onClick={() => paintCell(row.row, field)}
+                              className={`whitespace-nowrap border-b border-black/5 px-1.5 py-1 text-ink ${
+                                paintColor ? "cursor-crosshair" : ""
+                              }`}
                               style={{
-                                backgroundColor: style?.fill ?? undefined,
+                                backgroundColor: row.customBg?.[field] ?? style?.fill ?? undefined,
                                 fontWeight: style?.bold ? 600 : undefined,
                                 position: i === 0 ? "sticky" : undefined,
                                 left: i === 0 ? 0 : undefined,
                                 zIndex: i === 0 ? 10 : undefined,
+                                ...colWidthStyle(field),
                               }}
                             >
                               {editMode ? (
@@ -1359,7 +1913,7 @@ export function IaDocumentationWorkspace() {
                                   <input
                                     value={(value as string) ?? ""}
                                     onChange={(e) => setRowField(row.row, field, e.target.value)}
-                                    className="w-full min-w-[6rem] rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-black/10 focus:border-black/20"
+                                    className="w-full min-w-[6rem] rounded border border-transparent bg-transparent px-1 py-0 hover:border-black/10 focus:border-black/20"
                                   />
                                 </div>
                               ) : (
@@ -1370,12 +1924,15 @@ export function IaDocumentationWorkspace() {
                         })}
                         {visibleModels.map((m) => {
                           const value = row.models?.[m.key];
+                          const cellId = `models.${m.key}`;
                           return (
                             <td
                               key={m.key}
-                              className={`border-b border-black/5 px-2 py-1.5 ${statusClass(value)} ${
+                              onClick={() => paintCell(row.row, cellId)}
+                              className={`border-b border-black/5 px-1.5 py-1 ${statusClass(value)} ${
                                 compareMismatch ? "bg-amber-100 dark:bg-amber-900/30" : ""
-                              }`}
+                              } ${paintColor ? "cursor-crosshair" : ""}`}
+                              style={{ backgroundColor: row.customBg?.[cellId] ?? undefined, ...colWidthStyle(cellId) }}
                             >
                               {editMode ? (
                                 <select
@@ -1395,45 +1952,65 @@ export function IaDocumentationWorkspace() {
                             </td>
                           );
                         })}
-                        {tabData.componentColumns?.map((label) => (
-                          <td
-                            key={label}
-                            className="whitespace-nowrap border-b border-black/5 px-2 py-1.5 text-ink"
-                          >
-                            {editMode ? (
-                              <input
-                                value={row.componentSetting?.[label] ?? ""}
-                                onChange={(e) => setComponentCell(row.row, label, e.target.value)}
-                                className="w-full min-w-[5rem] rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-black/10 focus:border-black/20"
-                              />
-                            ) : (
-                              row.componentSetting?.[label] ?? ""
-                            )}
-                          </td>
-                        ))}
-                        {tabData.quickSetColumns.map((qs) => (
-                          <td
-                            key={qs.key}
-                            className="whitespace-nowrap border-b border-black/5 px-2 py-1.5 text-ink"
-                          >
-                            {editMode ? (
-                              <input
-                                value={row.quickSets?.[qs.key] ?? ""}
-                                onChange={(e) => setQuickSetCell(row.row, qs.key, e.target.value)}
-                                className="w-full min-w-[5rem] rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-black/10 focus:border-black/20"
-                              />
-                            ) : (
-                              row.quickSets?.[qs.key] ?? ""
-                            )}
-                          </td>
-                        ))}
+                        {tabData.componentColumns?.map((label) => {
+                          const cellId = `componentSetting.${label}`;
+                          return (
+                            <td
+                              key={label}
+                              onClick={() => paintCell(row.row, cellId)}
+                              className={`whitespace-nowrap border-b border-black/5 px-1.5 py-1 text-ink ${
+                                paintColor ? "cursor-crosshair" : ""
+                              }`}
+                              style={{ backgroundColor: row.customBg?.[cellId] ?? undefined, ...colWidthStyle(cellId) }}
+                            >
+                              {editMode ? (
+                                <input
+                                  value={row.componentSetting?.[label] ?? ""}
+                                  onChange={(e) => setComponentCell(row.row, label, e.target.value)}
+                                  className="w-full min-w-[5rem] rounded border border-transparent bg-transparent px-1 py-0 hover:border-black/10 focus:border-black/20"
+                                />
+                              ) : (
+                                row.componentSetting?.[label] ?? ""
+                              )}
+                            </td>
+                          );
+                        })}
+                        {tabData.quickSetColumns.map((qs) => {
+                          const cellId = `quickSets.${qs.key}`;
+                          return (
+                            <td
+                              key={qs.key}
+                              onClick={() => paintCell(row.row, cellId)}
+                              className={`whitespace-nowrap border-b border-black/5 px-1.5 py-1 text-ink ${
+                                paintColor ? "cursor-crosshair" : ""
+                              }`}
+                              style={{ backgroundColor: row.customBg?.[cellId] ?? undefined, ...colWidthStyle(cellId) }}
+                            >
+                              {editMode ? (
+                                <input
+                                  value={row.quickSets?.[qs.key] ?? ""}
+                                  onChange={(e) => setQuickSetCell(row.row, qs.key, e.target.value)}
+                                  className="w-full min-w-[5rem] rounded border border-transparent bg-transparent px-1 py-0 hover:border-black/10 focus:border-black/20"
+                                />
+                              ) : (
+                                row.quickSets?.[qs.key] ?? ""
+                              )}
+                            </td>
+                          );
+                        })}
                         {hasEpicColumn && (
-                          <td className="whitespace-nowrap border-b border-black/5 px-2 py-1.5 text-ink">
+                          <td
+                            onClick={() => paintCell(row.row, "epicStory")}
+                            className={`whitespace-nowrap border-b border-black/5 px-1.5 py-1 text-ink ${
+                              paintColor ? "cursor-crosshair" : ""
+                            }`}
+                            style={{ backgroundColor: row.customBg?.epicStory ?? undefined, ...colWidthStyle("epicStory") }}
+                          >
                             {editMode ? (
                               <input
                                 value={row.epicStory ?? ""}
                                 onChange={(e) => setRowField(row.row, "epicStory", e.target.value)}
-                                className="w-full min-w-[5rem] rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-black/10 focus:border-black/20"
+                                className="w-full min-w-[5rem] rounded border border-transparent bg-transparent px-1 py-0 hover:border-black/10 focus:border-black/20"
                               />
                             ) : (
                               row.epicStory ?? ""
@@ -1441,12 +2018,21 @@ export function IaDocumentationWorkspace() {
                           </td>
                         )}
                         {hasNotesColumn && (
-                          <td className="whitespace-nowrap border-b border-black/5 px-2 py-1.5 text-ink">
+                          <td
+                            onClick={() => paintCell(row.row, "designNotes")}
+                            className={`whitespace-nowrap border-b border-black/5 px-1.5 py-1 text-ink ${
+                              paintColor ? "cursor-crosshair" : ""
+                            }`}
+                            style={{
+                              backgroundColor: row.customBg?.designNotes ?? undefined,
+                              ...colWidthStyle("designNotes"),
+                            }}
+                          >
                             {editMode ? (
                               <input
                                 value={row.designNotes ?? ""}
                                 onChange={(e) => setRowField(row.row, "designNotes", e.target.value)}
-                                className="w-full min-w-[8rem] rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-black/10 focus:border-black/20"
+                                className="w-full min-w-[8rem] rounded border border-transparent bg-transparent px-1 py-0 hover:border-black/10 focus:border-black/20"
                               />
                             ) : (
                               row.designNotes ?? ""
@@ -1460,11 +2046,17 @@ export function IaDocumentationWorkspace() {
               </table>
             </div>
           ) : (
-            <div className="h-[70vh] w-full overflow-auto rounded-xl">
+            <div
+              className="h-[70vh] w-full overflow-auto rounded-xl"
+              style={{ zoom: `${zoom}%` }}
+            >
               <table className="w-full border-collapse text-left text-xs">
                 <thead>
                   <tr>
-                    <th className="sticky left-0 top-0 z-30 whitespace-nowrap border-b border-black/10 bg-surface px-2 py-2 font-semibold text-ink">
+                    <th
+                      className="sticky left-0 top-0 z-30 whitespace-nowrap border-b border-black/10 bg-surface px-1.5 py-1 font-semibold text-ink"
+                      style={colWidthStyle("level2")}
+                    >
                       <div className="flex items-center gap-1">
                         {editMode && (
                           <input
@@ -1476,15 +2068,21 @@ export function IaDocumentationWorkspace() {
                         )}
                         Feature
                       </div>
+                      <ColResizeHandle colId="level2" onResize={startColumnResize} />
                     </th>
-                    <th className="sticky top-0 z-20 whitespace-nowrap border-b border-black/10 bg-surface px-2 py-2 font-semibold text-ink">
+                    <th
+                      className="sticky top-0 z-20 whitespace-nowrap border-b border-black/10 bg-surface px-1.5 py-1 font-semibold text-ink"
+                      style={colWidthStyle("version")}
+                    >
                       Ver
+                      <ColResizeHandle colId="version" onResize={startColumnResize} />
                     </th>
                     {visibleModels.map((m) => (
                       <th
                         key={m.key}
                         title={`${m.family ?? ""} / ${m.segment ?? ""} / ${m.engineClass ?? ""} (${m.status ?? ""})`}
-                        className="sticky top-0 z-20 whitespace-nowrap border-b border-black/10 bg-surface px-2 py-2 font-semibold text-ink"
+                        className="sticky top-0 z-20 whitespace-nowrap border-b border-black/10 bg-surface px-1.5 py-1 font-semibold text-ink"
+                        style={colWidthStyle(`models.${m.key}`)}
                       >
                         <div className="flex items-center gap-1">
                           <input
@@ -1495,6 +2093,7 @@ export function IaDocumentationWorkspace() {
                           />
                           {m.key}
                         </div>
+                        <ColResizeHandle colId={`models.${m.key}`} onResize={startColumnResize} />
                       </th>
                     ))}
                   </tr>
@@ -1511,7 +2110,13 @@ export function IaDocumentationWorkspace() {
 
                     return (
                       <tr key={row.row}>
-                        <td className="sticky left-0 z-10 max-w-xs border-b border-black/5 bg-surface px-2 py-1.5 text-ink">
+                        <td
+                          onClick={() => paintCell(row.row, "level2")}
+                          className={`sticky left-0 z-10 max-w-xs border-b border-black/5 bg-surface px-1.5 py-1 text-ink ${
+                            paintColor ? "cursor-crosshair" : ""
+                          }`}
+                          style={{ backgroundColor: row.customBg?.level2 ?? undefined, ...colWidthStyle("level2") }}
+                        >
                           <div className="flex items-center gap-1">
                             {editMode && (
                               <input
@@ -1525,19 +2130,25 @@ export function IaDocumentationWorkspace() {
                               <input
                                 value={row.level2 ?? ""}
                                 onChange={(e) => setRowField(row.row, "level2", e.target.value)}
-                                className="w-full min-w-[12rem] rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-black/10 focus:border-black/20"
+                                className="w-full min-w-[12rem] rounded border border-transparent bg-transparent px-1 py-0 hover:border-black/10 focus:border-black/20"
                               />
                             ) : (
                               <span>{featurePath(row) || "—"}</span>
                             )}
                           </div>
                         </td>
-                        <td className="border-b border-black/5 px-2 py-1.5 text-muted">
+                        <td
+                          onClick={() => paintCell(row.row, "version")}
+                          className={`border-b border-black/5 px-1.5 py-1 text-muted ${
+                            paintColor ? "cursor-crosshair" : ""
+                          }`}
+                          style={{ backgroundColor: row.customBg?.version ?? undefined, ...colWidthStyle("version") }}
+                        >
                           {editMode ? (
                             <input
                               value={row.version ?? ""}
                               onChange={(e) => setRowField(row.row, "version", e.target.value)}
-                              className="w-14 rounded border border-transparent bg-transparent px-1 py-0.5 hover:border-black/10 focus:border-black/20"
+                              className="w-14 rounded border border-transparent bg-transparent px-1 py-0 hover:border-black/10 focus:border-black/20"
                             />
                           ) : (
                             (row.version ?? "")
@@ -1545,12 +2156,15 @@ export function IaDocumentationWorkspace() {
                         </td>
                         {visibleModels.map((m) => {
                           const value = row.models?.[m.key];
+                          const cellId = `models.${m.key}`;
                           return (
                             <td
                               key={m.key}
-                              className={`border-b border-black/5 px-2 py-1.5 ${statusClass(value)} ${
+                              onClick={() => paintCell(row.row, cellId)}
+                              className={`border-b border-black/5 px-1.5 py-1 ${statusClass(value)} ${
                                 compareMismatch ? "bg-amber-100 dark:bg-amber-900/30" : ""
-                              }`}
+                              } ${paintColor ? "cursor-crosshair" : ""}`}
+                              style={{ backgroundColor: row.customBg?.[cellId] ?? undefined, ...colWidthStyle(cellId) }}
                             >
                               {editMode ? (
                                 <select

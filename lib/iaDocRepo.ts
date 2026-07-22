@@ -64,6 +64,12 @@ export interface FeatureRow {
    * frontend reproduce the source sheet's own tree/depth visual language
    * instead of flattening it. Absent for tabs without this (e.g. Scan). */
   cellStyle?: Record<string, CellStyle>;
+  /** User-applied cell background colors (the "fill color" paint tool),
+   * keyed by cell id ("level2", "models.<key>", "componentSetting.<label>",
+   * "quickSets.<key>", "epicStory", "designNotes"). Independent of
+   * cellStyle -- this is manual user styling, not captured from the source
+   * xlsx, and always renders on top of it. */
+  customBg?: Record<string, string>;
 }
 
 export interface HeaderStyle {

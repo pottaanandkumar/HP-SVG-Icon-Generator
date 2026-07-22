@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { TopNav } from "@/components/TopNav";
 import { GeneratorSidebar } from "@/components/GeneratorSidebar";
 import { IaDocumentationWorkspace } from "@/components/IaDocumentationWorkspace";
@@ -10,7 +11,9 @@ export default function IaDocumentationPage() {
         <GeneratorSidebar />
         <main className="min-w-0 flex-1 px-8 py-8">
           <div className="mb-4 flex items-center gap-2 text-sm text-muted">
-            <span>All Agents</span>
+            <Link href="/" className="hover:text-ink hover:underline">
+              All Agents
+            </Link>
             <span>/</span>
             <span className="text-ink">IA Documentation</span>
           </div>

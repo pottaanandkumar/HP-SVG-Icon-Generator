@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   Grid2x2,
   Palette,
@@ -54,18 +55,32 @@ export function GeneratorSidebar() {
         </p>
       )}
       <nav className="flex flex-col gap-1">
-        {CATEGORIES.map(({ label, icon: Icon }) => (
-          <button
-            key={label}
-            title={collapsed ? label : undefined}
-            className={`flex items-center gap-3 rounded-lg py-2 text-sm text-ink hover:bg-panel ${
-              collapsed ? "justify-center px-0" : "px-2"
-            }`}
-          >
-            <Icon size={18} className="shrink-0 text-muted" />
-            {!collapsed && label}
-          </button>
-        ))}
+        {CATEGORIES.map(({ label, icon: Icon }) =>
+          label === "All Agents" ? (
+            <Link
+              key={label}
+              href="/"
+              title={collapsed ? label : undefined}
+              className={`flex items-center gap-3 rounded-lg py-2 text-sm text-ink hover:bg-panel ${
+                collapsed ? "justify-center px-0" : "px-2"
+              }`}
+            >
+              <Icon size={18} className="shrink-0 text-muted" />
+              {!collapsed && label}
+            </Link>
+          ) : (
+            <button
+              key={label}
+              title={collapsed ? label : undefined}
+              className={`flex items-center gap-3 rounded-lg py-2 text-sm text-ink hover:bg-panel ${
+                collapsed ? "justify-center px-0" : "px-2"
+              }`}
+            >
+              <Icon size={18} className="shrink-0 text-muted" />
+              {!collapsed && label}
+            </button>
+          )
+        )}
       </nav>
 
       <div className="my-4 h-px bg-black/10" />
