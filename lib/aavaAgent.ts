@@ -1,4 +1,5 @@
 import { isValidSvgMarkup } from "./svgValidation";
+import type { AgentAnalysis } from "./types";
 
 const BASE_URL = process.env.AAVA_AGENT_BASE_URL ?? "https://int-ai.aava.ai";
 const EXECUTE_PATH = process.env.AAVA_AGENT_EXECUTE_PATH ?? "/agents/execute/agent-executions";
@@ -7,11 +8,18 @@ const AGENT_ID = Number(process.env.AAVA_AGENT_ID ?? 48295);
 const TOKEN = process.env.AAVA_BEARER_TOKEN ?? "";
 
 const POLL_INTERVAL_MS = 3000;
-const POLL_TIMEOUT_MS = 150_000; // observed real runs take ~80s; give headroom
+// Kept well under typical proxy/gateway request timeouts (Render, Vercel,
+// etc. all cap how long a single HTTP request may stay open, regardless of
+// what timeout we set here) -- runs that take longer than this hand off to
+// checkIconGeneratorExecution() for the frontend to keep polling on its own
+// short-lived requests instead of trying to hold one connection open for
+// the whole thing. ~60-90s covers the common case in a single round trip.
+const POLL_TIMEOUT_MS = 90_000;
 
 export interface AgentIconResult {
   raw: unknown;
   svgs: string[];
+  analysis: AgentAnalysis;
   submitted: boolean;
   jobId?: number;
   executionId?: string;
@@ -47,11 +55,41 @@ function extractSvgsFromText(text: string): string[] {
   return result;
 }
 
-function extractSvgs(payload: unknown): string[] {
-  if (typeof payload === "string") return extractSvgsFromText(payload);
+/** The agent's response is either a plain string or an object with an
+ * `output` string field (see fetchExecutionHistory below) — this pulls out
+ * the actual free-text reasoning either way, falling back to a raw JSON dump
+ * only if neither shape matches (extraction below then just finds nothing,
+ * rather than throwing). */
+function getOutputText(payload: unknown): string {
+  if (typeof payload === "string") return payload;
   const output = (payload as { output?: unknown })?.output;
-  if (typeof output === "string") return extractSvgsFromText(output);
-  return extractSvgsFromText(JSON.stringify(payload));
+  if (typeof output === "string") return output;
+  return JSON.stringify(payload);
+}
+
+function extractSvgs(payload: unknown): string[] {
+  return extractSvgsFromText(getOutputText(payload));
+}
+
+/** Pulls the agent's own stated reasoning out of its free-text response --
+ * never fabricated. Every field is optional: if a given run's output
+ * doesn't include that part (wording varies run to run), the field is just
+ * left undefined so the frontend can skip that section instead of showing
+ * a placeholder. Verified against a real "printer" run — see
+ * scripts/inspect-raw-agent.mjs. */
+function parseAgentAnalysis(payload: unknown): AgentAnalysis {
+  const text = getOutputText(payload);
+  const semanticMatch = text.match(/Semantic Match:\s*(.+)/)?.[1]?.trim();
+  const namedFeatureResearch = text.match(/Named-Feature Research:\s*(.+)/)?.[1]?.trim();
+
+  const approachesBlock = text.match(
+    /Structural Approaches Used:\s*\n([\s\S]*?)(?:\n\s*\n|\n---|\nOption \d+:)/
+  )?.[1];
+  const structuralApproaches = approachesBlock
+    ? Array.from(approachesBlock.matchAll(/^\s*\d+\.\s*(.+)$/gm)).map((m) => m[1].trim())
+    : [];
+
+  return { semanticMatch, namedFeatureResearch, structuralApproaches };
 }
 
 export interface AgentIconRequestOptions {
@@ -146,6 +184,40 @@ function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+export interface AgentExecutionCheck {
+  status: "SUCCESS" | "RUNNING" | "FAILURE";
+  svgs: string[];
+  analysis: AgentAnalysis;
+  raw: unknown;
+}
+
+/**
+ * A single, non-looping status check against an already-submitted
+ * execution — one fast HTTP round trip, safe to call repeatedly (e.g. every
+ * few seconds from the browser) without the connection-held-open risk that
+ * runIconGeneratorAgent's internal poll loop has for long-running jobs.
+ * This is what backs the resumable-polling path: when the initial request
+ * times out before the job finishes, the frontend switches to calling this
+ * (via /api/agent/status) on its own schedule instead of giving up.
+ */
+export async function checkIconGeneratorExecution(executionId: string): Promise<AgentExecutionCheck> {
+  const history = await fetchExecutionHistory(executionId);
+  const status = history.status?.toUpperCase();
+
+  if (status === "SUCCESS") {
+    return {
+      status: "SUCCESS",
+      svgs: extractSvgs(history.raw),
+      analysis: parseAgentAnalysis(history.raw),
+      raw: history.raw,
+    };
+  }
+  if (status === "FAILURE" || status === "ERROR" || status === "FAILED") {
+    return { status: "FAILURE", svgs: [], analysis: { structuralApproaches: [] }, raw: history.raw };
+  }
+  return { status: "RUNNING", svgs: [], analysis: { structuralApproaches: [] }, raw: history.raw };
+}
+
 // Kept as a general safety net for one-off agent flakiness (the "edit"
 // binding bug above is deterministic and not something a retry fixes --
 // agentSafeIconName() is the actual fix for that one).
@@ -171,7 +243,12 @@ async function runIconGeneratorAgentOnce(
 
   if (!submitted.executionId) {
     // Submitted but no execution id to poll — return whatever we got.
-    return { raw: submitted.raw, svgs: extractSvgs(submitted.raw), submitted: false };
+    return {
+      raw: submitted.raw,
+      svgs: extractSvgs(submitted.raw),
+      analysis: parseAgentAnalysis(submitted.raw),
+      submitted: false,
+    };
   }
 
   const deadline = Date.now() + POLL_TIMEOUT_MS;
@@ -186,6 +263,7 @@ async function runIconGeneratorAgentOnce(
       return {
         raw: lastHistory.raw,
         svgs: extractSvgs(lastHistory.raw),
+        analysis: parseAgentAnalysis(lastHistory.raw),
         submitted: true,
         jobId: submitted.jobId,
         executionId: submitted.executionId,
@@ -202,6 +280,7 @@ async function runIconGeneratorAgentOnce(
   return {
     raw: lastHistory.raw,
     svgs: [],
+    analysis: { structuralApproaches: [] },
     submitted: true,
     jobId: submitted.jobId,
     executionId: submitted.executionId,

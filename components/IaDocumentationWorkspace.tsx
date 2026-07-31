@@ -14,6 +14,7 @@ import {
   ZoomOut,
   PaintBucket,
   Ban,
+  ArrowRight,
 } from "lucide-react";
 import type { AuditEntry, FeatureRow, ModelInfo, SchemaIndex, TabData } from "@/lib/iaDocRepo";
 
@@ -133,6 +134,49 @@ function ColResizeHandle({
       title="Drag to resize"
       className="absolute right-0 top-0 z-30 h-full w-1.5 cursor-col-resize select-none hover:bg-brand/50"
     />
+  );
+}
+
+/** MUI-style outlined text field: label sits inside the field until focused
+ * or filled, then floats up and "notches" through the top border. Pure CSS
+ * (Tailwind peer + :placeholder-shown) so it needs no focus/value state of
+ * its own -- placeholder=" " (a real space, not empty) is required for
+ * :placeholder-shown to fire correctly. bg-surface behind the floated label
+ * text is what cuts the notch into the border line. */
+function FloatingLabelInput({
+  id,
+  label,
+  value,
+  onChange,
+  disabled,
+  className,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  disabled?: boolean;
+  className?: string;
+}) {
+  return (
+    <div className={`relative ${className ?? ""}`}>
+      <input
+        id={id}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        disabled={disabled}
+        placeholder=" "
+        className="peer w-full rounded-lg border border-black/20 bg-transparent px-3 py-2 text-sm text-ink outline-none transition-colors hover:border-black/35 focus:border-brand disabled:cursor-not-allowed disabled:opacity-50"
+      />
+      <label
+        htmlFor={id}
+        className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 rounded bg-surface px-1 text-sm text-muted transition-all
+          peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-xs peer-focus:font-medium peer-focus:text-brand
+          peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:font-medium peer-[:not(:placeholder-shown)]:text-ink"
+      >
+        {label}
+      </label>
+    </div>
   );
 }
 
@@ -307,8 +351,11 @@ export function IaDocumentationWorkspace() {
   /** Manually-resized column widths (px), keyed by the same colId scheme as
    * customBg ("level2", "models.<key>", "componentSetting.<label>",
    * "quickSets.<key>", "epicStory", "designNotes"). Absent entries keep
-   * their natural content-driven width. */
-  const [colWidths, setColWidths] = useState<Record<string, number>>({});
+   * their natural content-driven width. "source" starts pinned narrow since
+   * it only ever holds a one-letter code (S/J/OPS) and would otherwise
+   * waste space matching its neighbors' width; still user-resizable from
+   * there like any other column. */
+  const [colWidths, setColWidths] = useState<Record<string, number>>({ source: 50 });
 
   const [showAddRow, setShowAddRow] = useState(false);
   const [newRowName, setNewRowName] = useState("");
@@ -1059,7 +1106,7 @@ export function IaDocumentationWorkspace() {
         body: JSON.stringify({ query, tab: activeTab }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? `Request failed (${res.status})`);
+      if (!res.ok || data.error) throw new Error(data.error ?? `Request failed (${res.status})`);
       setChatLog((log) => [
         ...log,
         { role: "agent", text: data.timedOut ? "Agent timed out." : data.answer || "(no answer)" },
@@ -1110,19 +1157,20 @@ export function IaDocumentationWorkspace() {
             ))}
           </select>
 
-          <input
-            value={rowSearch}
-            onChange={(e) => setRowSearch(e.target.value)}
-            placeholder="Search rows / features…"
-            className="min-w-[180px] rounded-lg border border-black/10 px-3 py-1.5 text-sm"
+          <FloatingLabelInput
+            id="model-filter"
+            label="Product"
+            value={modelFilter}
+            onChange={setModelFilter}
+            disabled={compareMode}
           />
 
-          <input
-            value={modelFilter}
-            onChange={(e) => setModelFilter(e.target.value)}
-            placeholder="Filter models…"
-            disabled={compareMode}
-            className="rounded-lg border border-black/10 px-3 py-1.5 text-sm disabled:opacity-50"
+          <FloatingLabelInput
+            id="row-search"
+            label="Features"
+            value={rowSearch}
+            onChange={setRowSearch}
+            className="min-w-[180px]"
           />
 
           <button
@@ -1571,6 +1619,7 @@ export function IaDocumentationWorkspace() {
                             return (
                               <th
                                 key={`tree-${i}`}
+                                data-col={colId}
                                 rowSpan={headerRowKeys.length - nameRowIndex}
                                 className="relative whitespace-nowrap border-b border-black/10 px-1.5 py-1 align-top font-semibold"
                                 style={{
@@ -1702,6 +1751,7 @@ export function IaDocumentationWorkspace() {
                           visibleModels.map((m) => (
                             <th
                               key={`name-${m.key}`}
+                              data-col={`models.${m.key}`}
                               title={`${m.family ?? ""} / ${m.segment ?? ""} / ${m.engineClass ?? ""} (${m.status ?? ""})`}
                               className="relative whitespace-nowrap border-b border-black/10 px-1.5 py-1 font-semibold"
                               style={{
@@ -1730,6 +1780,7 @@ export function IaDocumentationWorkspace() {
                           tabData.componentColumns?.map((label) => (
                             <th
                               key={`complabel-${label}`}
+                              data-col={`componentSetting.${label}`}
                               rowSpan={remainingRows}
                               className="relative whitespace-nowrap border-b border-black/10 px-1.5 py-1 align-top font-semibold"
                               style={{
@@ -1752,6 +1803,7 @@ export function IaDocumentationWorkspace() {
                           tabData.quickSetColumns.map((qs) => (
                             <th
                               key={`qm-${qs.key}`}
+                              data-col={`quickSets.${qs.key}`}
                               rowSpan={remainingRows}
                               className="relative whitespace-nowrap border-b border-black/10 px-1.5 py-1 align-top font-semibold"
                               style={{
@@ -1835,6 +1887,7 @@ export function IaDocumentationWorkspace() {
 
                         {rowIndex === 0 && hasEpicColumn && (
                           <th
+                            data-col="epicStory"
                             rowSpan={headerRowKeys.length}
                             className="relative whitespace-nowrap border-b border-black/10 px-1.5 py-1 align-bottom font-semibold"
                             style={{
@@ -1853,6 +1906,7 @@ export function IaDocumentationWorkspace() {
 
                         {rowIndex === 0 && hasNotesColumn && (
                           <th
+                            data-col="designNotes"
                             rowSpan={headerRowKeys.length}
                             className="relative whitespace-nowrap border-b border-black/10 px-1.5 py-1 align-bottom font-semibold"
                             style={{
@@ -1880,13 +1934,14 @@ export function IaDocumentationWorkspace() {
                       compareMode && compareValues.length > 1 && new Set(compareValues).size > 1;
 
                     return (
-                      <tr key={row.row}>
+                      <tr key={row.row} data-row={row.row}>
                         {tabData.featureTreeColumns.map((field, i) => {
                           const style = row.cellStyle?.[field];
                           const value = rowRecord[field];
                           return (
                             <td
                               key={field}
+                              data-col={field}
                               onClick={() => paintCell(row.row, field)}
                               className={`whitespace-nowrap border-b border-black/5 px-1.5 py-1 text-ink ${
                                 paintColor ? "cursor-crosshair" : ""
@@ -2109,7 +2164,7 @@ export function IaDocumentationWorkspace() {
                       new Set(compareValues).size > 1;
 
                     return (
-                      <tr key={row.row}>
+                      <tr key={row.row} data-row={row.row}>
                         <td
                           onClick={() => paintCell(row.row, "level2")}
                           className={`sticky left-0 z-10 max-w-xs border-b border-black/5 bg-surface px-1.5 py-1 text-ink ${
@@ -2195,19 +2250,35 @@ export function IaDocumentationWorkspace() {
 
       </div>
 
-      {/* Co-pilot -- floats over the top-right of the page instead of taking
-          a permanent layout column, so the grid above gets full width. */}
-      {copilotOpen && (
-        <div className="fixed right-6 top-24 z-40 flex h-[60vh] w-96 flex-col overflow-hidden rounded-2xl bg-surface p-4 shadow-xl ring-1 ring-black/10">
-          <div className="mb-2 flex shrink-0 items-center justify-between">
-            <p className="text-sm font-semibold text-ink">Co-pilot</p>
-            <button
-              onClick={() => setCopilotOpen(false)}
-              className="rounded-lg px-2 py-1 text-xs text-muted hover:bg-panel hover:text-ink"
-            >
-              Close
-            </button>
-          </div>
+      {/* Co-pilot -- slides in from the right as a half-screen drawer instead
+          of taking a permanent layout column, so the grid above keeps full
+          width when it's closed. Stays mounted even while closed (just
+          translated off-screen) so the close transition can actually play;
+          conditionally rendering it would just make it vanish instantly. */}
+      <div
+        aria-hidden={!copilotOpen}
+        onClick={() => setCopilotOpen(false)}
+        className={`fixed inset-0 z-30 bg-black/20 transition-opacity duration-300 ${
+          copilotOpen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
+      <div
+        className={`fixed right-0 top-[60px] bottom-0 z-40 flex w-full flex-col overflow-hidden bg-surface shadow-xl ring-1 ring-black/10 transition-transform duration-300 ease-in-out sm:w-1/2 ${
+          copilotOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex shrink-0 items-center justify-between border-b border-black/5 px-5 py-4">
+          <p className="text-sm font-semibold text-ink">Co-pilot</p>
+          <button
+            onClick={() => setCopilotOpen(false)}
+            title="Close"
+            aria-label="Close Co-pilot"
+            className="flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs font-medium text-muted hover:bg-panel hover:text-ink"
+          >
+            <ArrowRight size={16} />
+          </button>
+        </div>
+        <div className="flex min-h-0 flex-1 flex-col p-5">
           <div className="min-h-0 flex-1 space-y-3 overflow-y-auto text-sm">
             {chatLog.length === 0 && (
               <p className="text-muted">
@@ -2265,7 +2336,7 @@ export function IaDocumentationWorkspace() {
             </button>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

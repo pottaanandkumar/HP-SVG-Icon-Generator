@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
       size: body?.size,
       color: body?.color,
       states: body?.states,
+      referenceImages: Array.isArray(body?.referenceImages) ? body.referenceImages : undefined,
     });
     if (result.svgs.length > 0) {
       // Show every icon the agent actually returned — its own prompt says
@@ -39,17 +40,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         ok: true,
         svgs: result.svgs,
+        analysis: result.analysis,
         executionId: result.executionId,
         jobId: result.jobId,
         libraryNote,
       });
     }
     const error = result.timedOut
-      ? `The agent job (execution ${result.executionId ?? result.jobId}) is still running after the poll timeout — it may finish later, but this request gave up waiting.`
+      ? `The agent job (execution ${result.executionId ?? result.jobId}) is taking longer than usual — still checking in the background.`
       : result.submitted
         ? `The agent finished (execution ${result.executionId ?? result.jobId}) but didn't return any icon markup.`
         : "The research agent responded but didn't return any icon markup.";
-    return NextResponse.json({ ok: false, error, svgs: [], libraryNote });
+    return NextResponse.json({
+      ok: false,
+      error,
+      svgs: [],
+      libraryNote,
+      // timedOut + executionId let the frontend keep polling /api/agent/status
+      // for this same job instead of treating "still running" as a dead end.
+      timedOut: result.timedOut ?? false,
+      executionId: result.executionId,
+      jobId: result.jobId,
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Agent request failed";
     return NextResponse.json({ ok: false, error: message, svgs: [], libraryNote });

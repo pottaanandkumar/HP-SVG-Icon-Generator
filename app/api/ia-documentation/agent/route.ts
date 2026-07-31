@@ -37,10 +37,17 @@ export async function POST(req: Request) {
   const tabData = tab ? await readTab(tab) : null;
 
   const rows = tabData ? relevantRows(tabData.rows, query) : [];
+  const models = tabData?.models ?? [];
   const activeSchema = {
     availableTabs: schema.tabs.map((t) => t.name),
     activeTab: tab ?? null,
-    models: tabData?.models.map((m) => ({
+    // Spelled out explicitly rather than left for the agent to infer by
+    // scanning every model -- without this it's been observed treating a
+    // real segment name (e.g. "SCANJET") as unrecognized/external rather
+    // than matching it against the models below.
+    families: [...new Set(models.map((m) => m.family).filter((v): v is string => Boolean(v)))],
+    segments: [...new Set(models.map((m) => m.segment).filter((v): v is string => Boolean(v)))],
+    models: models.map((m) => ({
       key: m.key,
       family: m.family,
       segment: m.segment,
@@ -61,6 +68,15 @@ export async function POST(req: Request) {
     })),
   };
 
-  const result = await runIaDocumentationAgent(query, { activeSchema, matrixState });
-  return NextResponse.json({ ...result, rowsSent: rows.length });
+  try {
+    const result = await runIaDocumentationAgent(query, { activeSchema, matrixState, tab: tab ?? null });
+    return NextResponse.json({ ...result, rowsSent: rows.length });
+  } catch (err) {
+    // Without this, an agent-side execution failure (AAVA returns
+    // FAILURE/ERROR) throws unhandled and Next.js returns a bare 500 with
+    // no body -- the frontend's res.json() then fails too, so the user
+    // just sees "500 error" with no explanation. Surface it properly.
+    const message = err instanceof Error ? err.message : "Agent request failed";
+    return NextResponse.json({ ok: false, answer: "", error: message, rowsSent: rows.length });
+  }
 }

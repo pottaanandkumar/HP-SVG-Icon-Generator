@@ -25,6 +25,30 @@ interface SubmitResult {
 export interface IaDocContext {
   activeSchema: unknown;
   matrixState: unknown;
+  /** Name of the currently selected tab, e.g. "Scan" or "2-Line IA". */
+  tab: string | null;
+}
+
+/**
+ * This agent has both source workbooks (2-Line IA and Scan) baked into its
+ * own knowledge -- confirmed live: asked to scope to the "2-Line IA" tab, it
+ * answered with all 50+ models from *both* sheets combined, ignoring the
+ * tab-scoped matrix_state/active_schema entirely. Passing the right data
+ * isn't enough; the query itself has to explicitly instruct the agent to
+ * prefer that data over what it already knows and to ignore the other
+ * sheet. Prepending this is the mitigation available from our side -- the
+ * durable fix is tightening the agent's own system prompt on AAVA.
+ *
+ * Keep this SHORT. A verbose multi-sentence version of this instruction
+ * (tried first) made the agent execution fail outright (AAVA returns
+ * status FAILED, output null) on some queries -- e.g. reproducibly for
+ * "Get the list of products under SCANJET" on the Scan tab -- while this
+ * one-line version succeeds on the exact same request and still scopes
+ * correctly. Verified against live runs; see scripts/inspect-scanjet-failure2.mjs.
+ */
+function buildScopedQuery(query: string, tab: string | null): string {
+  if (!tab) return query;
+  return `[Answer using only the "${tab}" tab data below; ignore other tabs.] ${query}`;
 }
 
 async function submitJob(query: string, context: IaDocContext): Promise<SubmitResult> {
@@ -36,11 +60,16 @@ async function submitJob(query: string, context: IaDocContext): Promise<SubmitRe
   // name is inconsistent run to run.
   const matrixState = JSON.stringify(context.matrixState);
   const activeSchema = JSON.stringify(context.activeSchema);
+  const scopedQuery = buildScopedQuery(query, context.tab);
   const userInputs = {
-    query,
-    prompt: query,
-    question: query,
-    message: query,
+    query: scopedQuery,
+    prompt: scopedQuery,
+    question: scopedQuery,
+    message: scopedQuery,
+    tab: context.tab ?? "",
+    activeTab: context.tab ?? "",
+    selectedTab: context.tab ?? "",
+    currentTab: context.tab ?? "",
     matrix_state: matrixState,
     matrixState,
     current_matrix_state: matrixState,

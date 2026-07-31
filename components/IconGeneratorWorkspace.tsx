@@ -1,9 +1,22 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { AlertTriangle, CheckCircle2, Download, FileImage, FileCode2, ImageOff, Loader2, Sparkles } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Download,
+  FileImage,
+  FileCode2,
+  ImageOff,
+  Loader2,
+  Sparkles,
+  FileSearch,
+  Upload,
+  X,
+} from "lucide-react";
 import { IconSwatch } from "@/components/IconSwatch";
 import { CodeCard } from "@/components/CodeCard";
+import { IconDetailsScreen } from "@/components/IconDetailsScreen";
 import {
   copyToClipboard,
   downloadAllAsZip,
@@ -13,14 +26,28 @@ import {
   slugify,
   applyIconStyle,
 } from "@/lib/svgClientUtils";
-import type { RepoIconMatch, IconSizeKey, IconStateKey } from "@/lib/types";
+import type { RepoIconMatch, IconSizeKey, IconStateKey, AgentAnalysis } from "@/lib/types";
 import { ICON_SIZE_PX, ICON_SIZE_LABEL, ICON_STATE_LABEL, COLOR_SWATCHES } from "@/lib/types";
 
 type RepoStatus = "idle" | "searching" | "found" | "not-found";
-type ResultsStatus = "idle" | "loading" | "ready" | "error";
+type ResultsStatus = "idle" | "loading" | "waiting" | "ready" | "error";
 
 const ALL_SIZES: IconSizeKey[] = ["xs", "s", "m", "l", "xl"];
 const ALL_STATES: IconStateKey[] = ["default", "hover", "active", "disabled"];
+
+const MAX_REFERENCE_IMAGES = 4;
+const MAX_REFERENCE_IMAGE_BYTES = 4 * 1024 * 1024;
+
+const STATUS_POLL_INTERVAL_MS = 5000;
+// How much *additional* patience the frontend has after the initial request
+// already waited ~90s server-side -- generous on purpose, since the whole
+// point is to keep checking until the job actually finishes rather than
+// declaring defeat while it's still genuinely running.
+const MAX_STATUS_POLL_MS = 10 * 60 * 1000;
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export function IconGeneratorWorkspace() {
   const [query, setQuery] = useState("");
@@ -31,11 +58,22 @@ export function IconGeneratorWorkspace() {
   const [resultIcons, setResultIcons] = useState<string[]>([]);
   const [activeResultIndex, setActiveResultIndex] = useState(0);
   const [libraryNote, setLibraryNote] = useState("");
+  const [analysis, setAnalysis] = useState<AgentAnalysis | null>(null);
+  /** Which "screen" is showing. Details is an in-app view swap, not a route
+   * change or a new tab — resultIcons/analysis/etc above live in this same
+   * component and are just passed straight to IconDetailsScreen as props,
+   * so nothing the agent produced is ever lost switching between them. */
+  const [view, setView] = useState<"generator" | "details">("generator");
 
   const [description, setDescription] = useState("");
   const [size, setSize] = useState<IconSizeKey>("m");
   const [color, setColor] = useState<string | null>(null);
   const [states, setStates] = useState<IconStateKey[]>(["default", "active"]);
+  /** Optional visual references for the research agent -- data URIs held in
+   * memory only (never written anywhere) until Generate is clicked, at
+   * which point they ride along in the /api/agent/generate request body. */
+  const [referenceImages, setReferenceImages] = useState<{ name: string; dataUrl: string }[]>([]);
+  const [referenceImageError, setReferenceImageError] = useState("");
 
   function toggleState(key: IconStateKey) {
     setStates((prev) =>
@@ -43,17 +81,104 @@ export function IconGeneratorWorkspace() {
     );
   }
 
+  function readFileAsDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(reader.error ?? new Error("Failed to read file"));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function handleReferenceImagesSelected(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    setReferenceImageError("");
+
+    const remaining = MAX_REFERENCE_IMAGES - referenceImages.length;
+    if (remaining <= 0) {
+      setReferenceImageError(`You can attach up to ${MAX_REFERENCE_IMAGES} reference images.`);
+      return;
+    }
+
+    const picked = Array.from(files).slice(0, remaining);
+    const rejected: string[] = [];
+    const accepted: { name: string; dataUrl: string }[] = [];
+
+    for (const file of picked) {
+      if (!file.type.startsWith("image/")) {
+        rejected.push(`${file.name} (not an image)`);
+        continue;
+      }
+      if (file.size > MAX_REFERENCE_IMAGE_BYTES) {
+        rejected.push(`${file.name} (over ${MAX_REFERENCE_IMAGE_BYTES / (1024 * 1024)}MB)`);
+        continue;
+      }
+      accepted.push({ name: file.name, dataUrl: await readFileAsDataUrl(file) });
+    }
+
+    if (accepted.length > 0) setReferenceImages((prev) => [...prev, ...accepted]);
+    if (rejected.length > 0) setReferenceImageError(`Skipped: ${rejected.join(", ")}`);
+    else if (files.length > picked.length) {
+      setReferenceImageError(`Only added ${picked.length} — max ${MAX_REFERENCE_IMAGES} reference images.`);
+    }
+  }
+
+  function removeReferenceImage(index: number) {
+    setReferenceImages((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  /** Takes over when the initial /api/agent/generate request times out
+   * before the agent finishes -- keeps checking a cheap status endpoint on
+   * its own short-lived requests until the job actually completes, instead
+   * of the one long request that produced the "gave up waiting" error. */
+  async function pollExecutionStatus(executionId: string) {
+    setResultsStatus("waiting");
+    const deadline = Date.now() + MAX_STATUS_POLL_MS;
+
+    while (Date.now() < deadline) {
+      await sleep(STATUS_POLL_INTERVAL_MS);
+      try {
+        const res = await fetch(`/api/agent/status?executionId=${encodeURIComponent(executionId)}`);
+        const data = await res.json();
+
+        if (data.done && data.ok) {
+          setResultIcons(data.svgs ?? []);
+          setActiveResultIndex(0);
+          setAnalysis(data.analysis ?? null);
+          setResultsStatus("ready");
+          return;
+        }
+        if (data.done && !data.ok) {
+          setResultsError(data.error ?? "The research agent failed to produce icons.");
+          setResultsStatus("error");
+          return;
+        }
+        // Not done yet -- keep polling.
+      } catch {
+        // Transient hiccup checking status; the job itself may still be
+        // fine, so keep trying rather than aborting the wait.
+      }
+    }
+
+    setResultsError(
+      `The agent job (execution ${executionId}) is still running after an extended wait — it may finish later. You can try again, or wait and re-check.`
+    );
+    setResultsStatus("error");
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const name = query.trim();
     if (!name) return;
 
+    setView("generator");
     setRepoStatus("searching");
     setRepoMatch(null);
     setResultsStatus("loading");
     setResultsError("");
     setResultIcons([]);
     setLibraryNote("");
+    setAnalysis(null);
 
     // 1. Repo search — fast, shows immediately if found.
     try {
@@ -77,7 +202,14 @@ export function IconGeneratorWorkspace() {
       const res = await fetch("/api/agent/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ iconName: name, description: description.trim(), size, color, states }),
+        body: JSON.stringify({
+          iconName: name,
+          description: description.trim(),
+          size,
+          color,
+          states,
+          referenceImages: referenceImages.map((img) => img.dataUrl),
+        }),
       });
       const data = await res.json();
 
@@ -85,9 +217,18 @@ export function IconGeneratorWorkspace() {
         throw new Error(data.error ?? "Request failed");
       }
 
+      setLibraryNote(data.libraryNote ?? "");
+
+      if (!data.ok && data.timedOut && data.executionId) {
+        // The agent is still genuinely running, not failed -- hand off to
+        // resumable polling instead of declaring defeat.
+        await pollExecutionStatus(data.executionId);
+        return;
+      }
+
       setResultIcons(data.svgs ?? []);
       setActiveResultIndex(0);
-      setLibraryNote(data.libraryNote ?? "");
+      setAnalysis(data.analysis ?? null);
 
       if (!data.ok) {
         // Agent responded but produced no usable icons -- a real content
@@ -105,7 +246,25 @@ export function IconGeneratorWorkspace() {
     }
   }
 
-  const isLoading = repoStatus === "searching" || resultsStatus === "loading";
+  const isLoading =
+    repoStatus === "searching" || resultsStatus === "loading" || resultsStatus === "waiting";
+
+  if (view === "details") {
+    return (
+      <IconDetailsScreen
+        icons={resultIcons}
+        activeIndex={activeResultIndex}
+        onSelectIndex={setActiveResultIndex}
+        queryName={query}
+        description={description}
+        size={size}
+        color={color}
+        libraryNote={libraryNote}
+        analysis={analysis}
+        onBack={() => setView("generator")}
+      />
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[560px_1fr]">
@@ -124,15 +283,12 @@ export function IconGeneratorWorkspace() {
               placeholder="e.g. printer, shopping-cart, calendar…"
               className="rounded-lg border border-black/10 bg-panel px-4 py-3 text-sm text-ink placeholder:text-muted focus:border-brand focus:outline-none"
             />
-            <p className="text-xs text-muted">
-              We&apos;ll show a repo match immediately if found, and always run the AI research
-              agent too — its results appear below once ready.
-            </p>
           </div>
 
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-ink" htmlFor="icon-description">
-              Description <span className="font-normal text-muted">(optional)</span>
+              Description
+              {/* <span className="font-normal text-muted">(optional)</span> */}
             </label>
             <textarea
               id="icon-description"
@@ -142,9 +298,59 @@ export function IconGeneratorWorkspace() {
               rows={3}
               className="resize-none rounded-lg border border-black/10 bg-panel px-4 py-3 text-sm text-ink placeholder:text-muted focus:border-brand focus:outline-none"
             />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-ink" htmlFor="reference-images">
+              Add the reference Images <span className="font-normal text-muted">(optional)</span>
+            </label>
+            <input
+              id="reference-images"
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                handleReferenceImagesSelected(e.target.files);
+                e.target.value = "";
+              }}
+            />
+            <label
+              htmlFor="reference-images"
+              className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-black/20 bg-panel px-4 py-3 text-sm text-muted hover:border-brand hover:text-brand"
+            >
+              <Upload size={16} />
+              {referenceImages.length > 0
+                ? `Add more (${referenceImages.length}/${MAX_REFERENCE_IMAGES})`
+                : "Upload reference images"}
+            </label>
             <p className="text-xs text-muted">
-              Only used by the research agent — the repo search matches on name alone.
+              Shown to the research agent alongside your name/description — up to{" "}
+              {MAX_REFERENCE_IMAGES}, {MAX_REFERENCE_IMAGE_BYTES / (1024 * 1024)}MB each.
             </p>
+            {referenceImageError && <p className="text-xs text-amber-600">{referenceImageError}</p>}
+            {referenceImages.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {referenceImages.map((img, i) => (
+                  <div
+                    key={i}
+                    className="group relative h-16 w-16 overflow-hidden rounded-lg border border-black/10 bg-panel"
+                    title={img.name}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element -- local blob/data URI, not a servable asset */}
+                    <img src={img.dataUrl} alt={img.name} className="h-full w-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removeReferenceImage(i)}
+                      aria-label={`Remove ${img.name}`}
+                      className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                    >
+                      <X size={10} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div>
@@ -280,12 +486,54 @@ export function IconGeneratorWorkspace() {
           </div>
         )}
 
+        {resultsStatus === "waiting" && (
+          <div className="flex h-64 flex-col items-center justify-center gap-3 rounded-2xl bg-surface p-6 text-center text-sm text-muted shadow-sm">
+            <Loader2 size={20} className="animate-spin text-brand" />
+            <div>
+              <p className="font-medium text-ink">Still generating — this one&apos;s taking longer than usual…</p>
+              <p className="mt-1 text-xs text-muted">
+                The agent job is still running. Checking again every few seconds — no need to
+                resubmit, this will fill in automatically once it&apos;s done.
+              </p>
+            </div>
+          </div>
+        )}
+
         {resultsStatus === "error" && (
           <div className="flex items-start gap-3 rounded-2xl border border-amber-300/60 bg-amber-50 p-4 text-sm text-amber-900">
             <AlertTriangle size={18} className="mt-0.5 shrink-0" />
             <p className="text-amber-800">{resultsError}</p>
           </div>
         )}
+
+        {/* {resultsStatus === "ready" &&
+          resultIcons.length > 0 &&
+          analysis &&
+          analysis.structuralApproaches.length > 0 && (
+            <div className="rounded-2xl bg-surface p-6 shadow-sm">
+              <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-brand">
+                Agent Reasoning
+              </p>
+              <h3 className="mb-1 text-lg font-semibold text-ink">Metaphor Options</h3>
+              <p className="mb-4 text-xs text-muted">
+                Conceptual directions the research agent explored for &quot;{query}&quot; before
+                producing the options below.
+              </p>
+              <ol className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {analysis.structuralApproaches.map((approach, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-3 rounded-xl border border-black/5 bg-panel p-3"
+                  >
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-brand/10 text-[10px] font-semibold text-brand">
+                      {i + 1}
+                    </span>
+                    <span className="text-sm text-ink/80">{approach}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )} */}
 
         {resultsStatus === "ready" && resultIcons.length > 0 && (
           <AgentIconPreview
@@ -299,6 +547,7 @@ export function IconGeneratorWorkspace() {
             states={states}
             heading="Icon options"
             subheading={`The AI research agent generated ${resultIcons.length} icon${resultIcons.length > 1 ? "s" : ""} for "${query}".`}
+            onOpenDetails={() => setView("details")}
           />
         )}
       </section>
@@ -406,20 +655,6 @@ function RepoNotFoundPreview({ queryName }: { queryName: string }) {
         <h3 className="text-lg font-semibold text-ink">ECHO Design System — {queryName}</h3>
       </div>
 
-      <div className="flex items-center justify-center gap-6 rounded-xl bg-[#f5f5f7] py-8">
-        <div className="flex flex-col items-center gap-2">
-          <div className="flex h-[140px] w-[140px] items-center justify-center rounded-xl border border-dashed border-black/15 bg-white">
-            <ImageOff size={28} className="text-muted" />
-          </div>
-          <span className="text-xs text-muted">Light mode</span>
-        </div>
-        <div className="flex flex-col items-center gap-2">
-          <div className="flex h-[140px] w-[140px] items-center justify-center rounded-xl border border-dashed border-white/15 bg-[#1c1c1e]">
-            <ImageOff size={28} className="text-white/40" />
-          </div>
-          <span className="text-xs text-muted">Dark mode</span>
-        </div>
-      </div>
       <p className="mt-3 text-center text-xs text-muted">No icon found in Echo Library</p>
     </div>
   );
@@ -436,6 +671,7 @@ function AgentIconPreview({
   states,
   heading,
   subheading,
+  onOpenDetails,
 }: {
   icons: string[];
   labels: string[];
@@ -447,6 +683,7 @@ function AgentIconPreview({
   states: IconStateKey[];
   heading: string;
   subheading: string;
+  onOpenDetails: () => void;
 }) {
   const pxSize = ICON_SIZE_PX[size];
   const visibleStates = states.length > 0 ? states : (["default"] as IconStateKey[]);
@@ -469,6 +706,13 @@ function AgentIconPreview({
             <p className="text-xs text-muted">{subheading}</p>
           </div>
           <div className="flex gap-2">
+            <button
+              onClick={onOpenDetails}
+              title="Open a full analysis and comparison screen for these icons"
+              className="flex items-center gap-1.5 rounded-lg bg-panel px-3 py-2 text-sm font-medium text-ink hover:bg-black/5"
+            >
+              <FileSearch size={14} /> Details
+            </button>
             <button
               onClick={() => downloadAll("svg")}
               className="flex items-center gap-1.5 rounded-lg bg-panel px-3 py-2 text-sm font-medium text-brand hover:bg-black/5"

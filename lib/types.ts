@@ -4,9 +4,19 @@ export interface RepoIconMatch {
   svg: string;
 }
 
+/** Parsed from the agent's own free-text reasoning (not fabricated) --
+ * anything not present in that run's actual response is left undefined so
+ * the frontend can skip that part of the report rather than show a blank. */
+export interface AgentAnalysis {
+  semanticMatch?: string;
+  namedFeatureResearch?: string;
+  structuralApproaches: string[];
+}
+
 export interface AgentGenerateResponse {
   raw: unknown;
   svgs: string[];
+  analysis: AgentAnalysis;
 }
 
 export type IconSizeKey = "xs" | "s" | "m" | "l" | "xl";
