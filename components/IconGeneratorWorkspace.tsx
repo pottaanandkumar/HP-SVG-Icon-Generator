@@ -523,7 +523,7 @@ export function IconGeneratorWorkspace() {
           </div>
         )}
 
-        {/* {resultsStatus === "ready" &&
+        {resultsStatus === "ready" &&
           resultIcons.length > 0 &&
           analysis &&
           analysis.structuralApproaches.length > 0 && (
@@ -550,7 +550,7 @@ export function IconGeneratorWorkspace() {
                 ))}
               </ol>
             </div>
-          )} */}
+          )}
 
         {resultsStatus === "ready" && resultIcons.length > 0 && (
           <AgentIconPreview
