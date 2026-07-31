@@ -74,6 +74,10 @@ export function IconGeneratorWorkspace() {
    * which point they ride along in the /api/agent/generate request body. */
   const [referenceImages, setReferenceImages] = useState<{ name: string; dataUrl: string }[]>([]);
   const [referenceImageError, setReferenceImageError] = useState("");
+  /** True when images were attached and sent, but AAVA rejected them for
+   * this agent (see lib/aavaAgent.ts dataUrlToBlob) -- the generation still
+   * ran, just without the images, so this is a heads-up, not an error. */
+  const [referenceImagesRejected, setReferenceImagesRejected] = useState(false);
 
   function toggleState(key: IconStateKey) {
     setStates((prev) =>
@@ -179,6 +183,7 @@ export function IconGeneratorWorkspace() {
     setResultIcons([]);
     setLibraryNote("");
     setAnalysis(null);
+    setReferenceImagesRejected(false);
 
     // 1. Repo search — fast, shows immediately if found.
     try {
@@ -218,6 +223,7 @@ export function IconGeneratorWorkspace() {
       }
 
       setLibraryNote(data.libraryNote ?? "");
+      setReferenceImagesRejected(Boolean(data.referenceImagesRejected));
 
       if (!data.ok && data.timedOut && data.executionId) {
         // The agent is still genuinely running, not failed -- hand off to
@@ -471,6 +477,17 @@ export function IconGeneratorWorkspace() {
           <div className="flex items-start gap-3 rounded-2xl border border-emerald-300/60 bg-emerald-50 p-4 text-sm text-emerald-900">
             <CheckCircle2 size={18} className="mt-0.5 shrink-0" />
             <p>{libraryNote}</p>
+          </div>
+        )}
+
+        {referenceImagesRejected && (
+          <div className="flex items-start gap-3 rounded-2xl border border-amber-300/60 bg-amber-50 p-4 text-sm text-amber-900">
+            <AlertTriangle size={18} className="mt-0.5 shrink-0" />
+            <p>
+              Your reference image{referenceImages.length === 1 ? "" : "s"} couldn&apos;t be sent —
+              the research agent doesn&apos;t currently accept image attachments. Generation ran
+              from the name/description only.
+            </p>
           </div>
         )}
 

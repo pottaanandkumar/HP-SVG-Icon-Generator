@@ -25,6 +25,9 @@ export interface AgentIconResult {
   executionId?: string;
   /** True if we hit POLL_TIMEOUT_MS before the job reached a terminal status. */
   timedOut?: boolean;
+  /** True if reference images were provided but AAVA rejected them (file
+   * type not allowed for this agent) and the job ran without them. */
+  referenceImagesRejected?: boolean;
 }
 
 const SVG_TAG_RE = /<svg[\s\S]*?<\/svg>/gi;
@@ -112,7 +115,7 @@ interface SubmitResult {
 }
 
 function dataUrlToBlob(dataUrl: string): { blob: Blob; ext: string } | null {
-  const match = dataUrl.match(/^data:([^;]+);base64,(.*)$/s);
+  const match = dataUrl.match(/^data:([^;]+);base64,([\s\S]*)$/);
   if (!match) return null;
   const [, mime, base64] = match;
   const bytes = Buffer.from(base64, "base64");
@@ -293,6 +296,7 @@ async function runIconGeneratorAgentOnce(
       svgs: extractSvgs(submitted.raw),
       analysis: parseAgentAnalysis(submitted.raw),
       submitted: false,
+      referenceImagesRejected: submitted.referenceImagesRejected,
     };
   }
 
@@ -312,6 +316,7 @@ async function runIconGeneratorAgentOnce(
         submitted: true,
         jobId: submitted.jobId,
         executionId: submitted.executionId,
+        referenceImagesRejected: submitted.referenceImagesRejected,
       };
     }
     if (status === "FAILURE" || status === "ERROR" || status === "FAILED") {
@@ -330,5 +335,6 @@ async function runIconGeneratorAgentOnce(
     jobId: submitted.jobId,
     executionId: submitted.executionId,
     timedOut: true,
+    referenceImagesRejected: submitted.referenceImagesRejected,
   };
 }
