@@ -84,7 +84,7 @@ function statusClass(value: string | undefined): string {
 }
 
 function featurePath(row: FeatureRow): string {
-  return [row.level2, row.level3, row.level4, row.level5, row.level6, row.level7]
+  return [row.level2, row.level3, row.level4, row.level5, row.level6, row.level7, row.level8, row.level9]
     .filter(Boolean)
     .join(" › ");
 }
@@ -467,6 +467,9 @@ export function IaDocumentationWorkspace() {
   const hasComponents = (tabData?.componentColumns?.length ?? 0) > 0;
   const hasEpicColumn = Boolean(tabData?.headerStyle?.epicBandFill || tabData?.headerStyle?.epicLabel);
   const hasNotesColumn = Boolean(tabData?.headerStyle?.notesLabel);
+  const hasBehaviorColumn = Boolean(
+    tabData?.headerStyle?.behaviorBandFill || tabData?.headerStyle?.behaviorLabel
+  );
 
   const headerRowKeys = [
     "family",
@@ -865,6 +868,15 @@ export function IaDocumentationWorkspace() {
             })
           );
         }
+        if (rowIndex === 0 && hasBehaviorColumn) {
+          cells.push(
+            th(tabData.headerStyle?.behaviorLabel ?? "Behavior", {
+              rowSpan: headerRowKeys.length,
+              bg: tabData.headerStyle?.behaviorBandFill,
+              color: "#fff",
+            })
+          );
+        }
         if (rowIndex === 0 && hasNotesColumn) {
           cells.push(th(tabData.headerStyle?.notesLabel ?? "Notes", { rowSpan: headerRowKeys.length }));
         }
@@ -906,6 +918,7 @@ export function IaDocumentationWorkspace() {
           cells.push(td(row.quickSets?.[qs.key] ?? "", { bg: row.customBg?.[cellId] }));
         });
         if (hasEpicColumn) cells.push(td(row.epicStory ?? "", { bg: row.customBg?.epicStory }));
+        if (hasBehaviorColumn) cells.push(td(row.behaviorNote ?? "", { bg: row.customBg?.behaviorNote }));
         if (hasNotesColumn) cells.push(td(row.designNotes ?? "", { bg: row.customBg?.designNotes }));
 
         return `<tr>${cells.join("")}</tr>`;
@@ -1397,7 +1410,7 @@ export function IaDocumentationWorkspace() {
             }`}
           >
             <Bot size={14} />
-            Co-pilot
+            AAVA Co-pilot
           </button>
         </div>
 
@@ -1904,6 +1917,25 @@ export function IaDocumentationWorkspace() {
                           </th>
                         )}
 
+                        {rowIndex === 0 && hasBehaviorColumn && (
+                          <th
+                            data-col="behaviorNote"
+                            rowSpan={headerRowKeys.length}
+                            className="relative whitespace-nowrap border-b border-black/10 px-1.5 py-1 align-bottom font-semibold"
+                            style={{
+                              backgroundColor: tabData.headerStyle?.behaviorBandFill ?? undefined,
+                              color: "#fff",
+                              position: "sticky",
+                              top: 0,
+                              zIndex: 20,
+                              ...colWidthStyle("behaviorNote"),
+                            }}
+                          >
+                            {tabData.headerStyle?.behaviorLabel ?? "Behavior"}
+                            <ColResizeHandle colId="behaviorNote" onResize={startColumnResize} />
+                          </th>
+                        )}
+
                         {rowIndex === 0 && hasNotesColumn && (
                           <th
                             data-col="designNotes"
@@ -2069,6 +2101,28 @@ export function IaDocumentationWorkspace() {
                               />
                             ) : (
                               row.epicStory ?? ""
+                            )}
+                          </td>
+                        )}
+                        {hasBehaviorColumn && (
+                          <td
+                            onClick={() => paintCell(row.row, "behaviorNote")}
+                            className={`whitespace-nowrap border-b border-black/5 px-1.5 py-1 text-ink ${
+                              paintColor ? "cursor-crosshair" : ""
+                            }`}
+                            style={{
+                              backgroundColor: row.customBg?.behaviorNote ?? undefined,
+                              ...colWidthStyle("behaviorNote"),
+                            }}
+                          >
+                            {editMode ? (
+                              <input
+                                value={row.behaviorNote ?? ""}
+                                onChange={(e) => setRowField(row.row, "behaviorNote", e.target.value)}
+                                className="w-full min-w-[5rem] rounded border border-transparent bg-transparent px-1 py-0 hover:border-black/10 focus:border-black/20"
+                              />
+                            ) : (
+                              row.behaviorNote ?? ""
                             )}
                           </td>
                         )}
@@ -2268,7 +2322,7 @@ export function IaDocumentationWorkspace() {
         }`}
       >
         <div className="flex shrink-0 items-center justify-between border-b border-black/5 px-5 py-4">
-          <p className="text-sm font-semibold text-ink">Co-pilot</p>
+          <p className="text-sm font-semibold text-ink">AAVA Co-pilot</p>
           <button
             onClick={() => setCopilotOpen(false)}
             title="Close"

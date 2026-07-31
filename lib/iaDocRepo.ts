@@ -53,11 +53,21 @@ export interface FeatureRow {
   level5: string | null;
   level6: string | null;
   level7: string | null;
+  /** Deeper tree levels -- needed by sheets with a taller hierarchy than
+   * Scan/2-Line IA (e.g. Settings, which nests down to "Level 9"). Absent
+   * fields are simply unused by tabs that don't go that deep. */
+  level8?: string | null;
+  level9?: string | null;
   models?: Record<string, string>;
   componentSetting?: Record<string, string>;
   quickSets?: Record<string, string>;
   epicStory?: string;
   designNotes?: string;
+  /** Generic single labeled column beyond the epic/notes slots (e.g.
+   * Settings' "Behavior" column, after "Short description" already reuses
+   * the epicStory/epicLabel slot). Same pattern as epicStory: label comes
+   * from HeaderStyle.behaviorLabel, absent when the tab has no such column. */
+  behaviorNote?: string;
   /** Original xlsx presentation (fill color, bold) per feature-tree field on
    * this row, keyed by field name ("version", "level2", etc). Only present
    * for tabs converted with style capture (currently 2-Line IA) -- lets the
@@ -88,6 +98,8 @@ export interface HeaderStyle {
   epicBandFill?: string | null;
   epicLabel?: string | null;
   notesLabel?: string | null;
+  behaviorBandFill?: string | null;
+  behaviorLabel?: string | null;
 }
 
 export interface TabData {

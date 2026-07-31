@@ -5,7 +5,7 @@ import { runIaDocumentationAgent } from "@/lib/iaDocumentationAgent";
 const MAX_ROWS = 40;
 
 function featurePath(row: FeatureRow): string {
-  return [row.level2, row.level3, row.level4, row.level5, row.level6, row.level7]
+  return [row.level2, row.level3, row.level4, row.level5, row.level6, row.level7, row.level8, row.level9]
     .filter(Boolean)
     .join(" > ");
 }
