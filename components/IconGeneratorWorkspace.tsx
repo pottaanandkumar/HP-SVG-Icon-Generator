@@ -11,8 +11,6 @@ import {
   Loader2,
   Sparkles,
   FileSearch,
-  Upload,
-  X,
 } from "lucide-react";
 import { IconSwatch } from "@/components/IconSwatch";
 import { CodeCard } from "@/components/CodeCard";
@@ -34,9 +32,6 @@ type ResultsStatus = "idle" | "loading" | "waiting" | "ready" | "error";
 
 const ALL_SIZES: IconSizeKey[] = ["xs", "s", "m", "l", "xl"];
 const ALL_STATES: IconStateKey[] = ["default", "hover", "active", "disabled"];
-
-const MAX_REFERENCE_IMAGES = 4;
-const MAX_REFERENCE_IMAGE_BYTES = 4 * 1024 * 1024;
 
 const STATUS_POLL_INTERVAL_MS = 5000;
 // How much *additional* patience the frontend has after the initial request
@@ -69,66 +64,11 @@ export function IconGeneratorWorkspace() {
   const [size, setSize] = useState<IconSizeKey>("m");
   const [color, setColor] = useState<string | null>(null);
   const [states, setStates] = useState<IconStateKey[]>(["default", "active"]);
-  /** Optional visual references for the research agent -- data URIs held in
-   * memory only (never written anywhere) until Generate is clicked, at
-   * which point they ride along in the /api/agent/generate request body. */
-  const [referenceImages, setReferenceImages] = useState<{ name: string; dataUrl: string }[]>([]);
-  const [referenceImageError, setReferenceImageError] = useState("");
-  /** True when images were attached and sent, but AAVA rejected them for
-   * this agent (see lib/aavaAgent.ts dataUrlToBlob) -- the generation still
-   * ran, just without the images, so this is a heads-up, not an error. */
-  const [referenceImagesRejected, setReferenceImagesRejected] = useState(false);
 
   function toggleState(key: IconStateKey) {
     setStates((prev) =>
       prev.includes(key) ? prev.filter((s) => s !== key) : [...prev, key]
     );
-  }
-
-  function readFileAsDataUrl(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = () => reject(reader.error ?? new Error("Failed to read file"));
-      reader.readAsDataURL(file);
-    });
-  }
-
-  async function handleReferenceImagesSelected(files: FileList | null) {
-    if (!files || files.length === 0) return;
-    setReferenceImageError("");
-
-    const remaining = MAX_REFERENCE_IMAGES - referenceImages.length;
-    if (remaining <= 0) {
-      setReferenceImageError(`You can attach up to ${MAX_REFERENCE_IMAGES} reference images.`);
-      return;
-    }
-
-    const picked = Array.from(files).slice(0, remaining);
-    const rejected: string[] = [];
-    const accepted: { name: string; dataUrl: string }[] = [];
-
-    for (const file of picked) {
-      if (!file.type.startsWith("image/")) {
-        rejected.push(`${file.name} (not an image)`);
-        continue;
-      }
-      if (file.size > MAX_REFERENCE_IMAGE_BYTES) {
-        rejected.push(`${file.name} (over ${MAX_REFERENCE_IMAGE_BYTES / (1024 * 1024)}MB)`);
-        continue;
-      }
-      accepted.push({ name: file.name, dataUrl: await readFileAsDataUrl(file) });
-    }
-
-    if (accepted.length > 0) setReferenceImages((prev) => [...prev, ...accepted]);
-    if (rejected.length > 0) setReferenceImageError(`Skipped: ${rejected.join(", ")}`);
-    else if (files.length > picked.length) {
-      setReferenceImageError(`Only added ${picked.length} — max ${MAX_REFERENCE_IMAGES} reference images.`);
-    }
-  }
-
-  function removeReferenceImage(index: number) {
-    setReferenceImages((prev) => prev.filter((_, i) => i !== index));
   }
 
   /** Takes over when the initial /api/agent/generate request times out
@@ -183,7 +123,6 @@ export function IconGeneratorWorkspace() {
     setResultIcons([]);
     setLibraryNote("");
     setAnalysis(null);
-    setReferenceImagesRejected(false);
 
     // 1. Repo search — fast, shows immediately if found.
     try {
@@ -213,7 +152,6 @@ export function IconGeneratorWorkspace() {
           size,
           color,
           states,
-          referenceImages: referenceImages.map((img) => img.dataUrl),
         }),
       });
       const data = await res.json();
@@ -223,7 +161,6 @@ export function IconGeneratorWorkspace() {
       }
 
       setLibraryNote(data.libraryNote ?? "");
-      setReferenceImagesRejected(Boolean(data.referenceImagesRejected));
 
       if (!data.ok && data.timedOut && data.executionId) {
         // The agent is still genuinely running, not failed -- hand off to
@@ -304,59 +241,6 @@ export function IconGeneratorWorkspace() {
               rows={3}
               className="resize-none rounded-lg border border-black/10 bg-panel px-4 py-3 text-sm text-ink placeholder:text-muted focus:border-brand focus:outline-none"
             />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-ink" htmlFor="reference-images">
-              Add the reference Images <span className="font-normal text-muted">(optional)</span>
-            </label>
-            <input
-              id="reference-images"
-              type="file"
-              accept="image/*"
-              multiple
-              className="hidden"
-              onChange={(e) => {
-                handleReferenceImagesSelected(e.target.files);
-                e.target.value = "";
-              }}
-            />
-            <label
-              htmlFor="reference-images"
-              className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-black/20 bg-panel px-4 py-3 text-sm text-muted hover:border-brand hover:text-brand"
-            >
-              <Upload size={16} />
-              {referenceImages.length > 0
-                ? `Add more (${referenceImages.length}/${MAX_REFERENCE_IMAGES})`
-                : "Upload reference images"}
-            </label>
-            <p className="text-xs text-muted">
-              Shown to the research agent alongside your name/description — up to{" "}
-              {MAX_REFERENCE_IMAGES}, {MAX_REFERENCE_IMAGE_BYTES / (1024 * 1024)}MB each.
-            </p>
-            {referenceImageError && <p className="text-xs text-amber-600">{referenceImageError}</p>}
-            {referenceImages.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {referenceImages.map((img, i) => (
-                  <div
-                    key={i}
-                    className="group relative h-16 w-16 overflow-hidden rounded-lg border border-black/10 bg-panel"
-                    title={img.name}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element -- local blob/data URI, not a servable asset */}
-                    <img src={img.dataUrl} alt={img.name} className="h-full w-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => removeReferenceImage(i)}
-                      aria-label={`Remove ${img.name}`}
-                      className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition-opacity group-hover:opacity-100"
-                    >
-                      <X size={10} />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
 
           <div>
@@ -480,17 +364,6 @@ export function IconGeneratorWorkspace() {
           </div>
         )}
 
-        {referenceImagesRejected && (
-          <div className="flex items-start gap-3 rounded-2xl border border-amber-300/60 bg-amber-50 p-4 text-sm text-amber-900">
-            <AlertTriangle size={18} className="mt-0.5 shrink-0" />
-            <p>
-              Your reference image{referenceImages.length === 1 ? "" : "s"} couldn&apos;t be sent —
-              the research agent doesn&apos;t currently accept image attachments. Generation ran
-              from the name/description only.
-            </p>
-          </div>
-        )}
-
         {resultsStatus === "loading" && (
           <div className="flex h-64 flex-col items-center justify-center gap-3 rounded-2xl bg-surface p-6 text-center text-sm text-muted shadow-sm">
             <Loader2 size={20} className="animate-spin text-brand" />
@@ -522,35 +395,6 @@ export function IconGeneratorWorkspace() {
             <p className="text-amber-800">{resultsError}</p>
           </div>
         )}
-
-        {resultsStatus === "ready" &&
-          resultIcons.length > 0 &&
-          analysis &&
-          analysis.structuralApproaches.length > 0 && (
-            <div className="rounded-2xl bg-surface p-6 shadow-sm">
-              <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-brand">
-                Agent Reasoning
-              </p>
-              <h3 className="mb-1 text-lg font-semibold text-ink">Metaphor Options</h3>
-              <p className="mb-4 text-xs text-muted">
-                Conceptual directions the research agent explored for &quot;{query}&quot; before
-                producing the options below.
-              </p>
-              <ol className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {analysis.structuralApproaches.map((approach, i) => (
-                  <li
-                    key={i}
-                    className="flex items-start gap-3 rounded-xl border border-black/5 bg-panel p-3"
-                  >
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-brand/10 text-[10px] font-semibold text-brand">
-                      {i + 1}
-                    </span>
-                    <span className="text-sm text-ink/80">{approach}</span>
-                  </li>
-                ))}
-              </ol>
-            </div>
-          )}
 
         {resultsStatus === "ready" && resultIcons.length > 0 && (
           <AgentIconPreview

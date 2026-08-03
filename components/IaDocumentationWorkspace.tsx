@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
 import {
@@ -15,6 +16,7 @@ import {
   PaintBucket,
   Ban,
   ArrowRight,
+  ChevronDown,
 } from "lucide-react";
 import type { AuditEntry, FeatureRow, ModelInfo, SchemaIndex, TabData } from "@/lib/iaDocRepo";
 
@@ -34,6 +36,31 @@ const STATUS_HEX: Record<string, string> = {
 };
 
 const STATUS_OPTIONS = ["", "Y", "n/a", "want", "WIP", "Ready"];
+
+/** Default widths (px) for the frozen tree columns when the user hasn't
+ * manually resized them -- see treeColWidthStyle's doc comment for why
+ * these need a compact default instead of natural sizing. "__level__" is
+ * the fallback for any level2..level9 field not listed individually (they
+ * all read the same as generic hierarchy levels). */
+const DEFAULT_TREE_COL_WIDTH: Record<string, number> = {
+  version: 70,
+  source: 50,
+  __level__: 150,
+};
+
+/** On-screen override for the "Components: Setting row" band -- the source
+ * xlsx's own captured color (headerStyle.componentsBandFill, a salmon/coral)
+ * is still used for the Excel export so that file stays a faithful color
+ * reproduction of the sheet, but the live grid uses the app's own brand
+ * color here instead, both to read as more distinct from the family/segment
+ * bands above it and to match the rest of the app's palette. */
+const COMPONENTS_BAND_COLOR = "#5b5bd6";
+/** The "Level 1 / Level 2 / ..." sub-header row directly under the
+ * Components band -- was inheriting the same dark gray as the main tree
+ * headers (treeHeaderFill), which read as visually disconnected from the
+ * purple band above it. A lighter tint of the same brand color instead,
+ * so the whole Components section reads as one cohesive block. */
+const COMPONENTS_SUBHEADER_COLOR = "#8f90e3";
 
 /** Sentinel value for paintColor meaning "clear this cell's custom fill"
  * rather than "paint it fresh" -- kept distinct from null (paint tool off)
@@ -89,10 +116,52 @@ function featurePath(row: FeatureRow): string {
     .join(" › ");
 }
 
-function matchesSearch(row: FeatureRow, terms: string[]): boolean {
-  if (terms.length === 0) return true;
-  const text = featurePath(row).toLowerCase();
-  return terms.some((t) => text.includes(t));
+/** Tree columns that aren't part of the group/subgroup/.../feature hierarchy
+ * -- Version and source are per-row metadata, not a nesting level, so they
+ * don't get their own drill-down dropdown. */
+const NON_HIERARCHY_TREE_FIELDS = new Set(["version", "source"]);
+
+/**
+ * The source sheets store each hierarchy level's label only on the row where
+ * it changes (mirroring the original xlsx's merged cells) -- a "1 Minute"
+ * child row has nothing in its own Level3/4/5/6 cells, only its own leaf
+ * level. Forward-filling each column top-to-bottom (and resetting deeper
+ * columns whenever a shallower one changes) reconstructs the effective
+ * group/subgroup/.../feature path for every row, the same way it would read
+ * visually in the original merged-cell sheet. This is what makes searching
+ * "Settings" or "Sleep" surface the whole nested subtree underneath it, and
+ * what the level dropdowns filter/cascade against.
+ */
+function computeFilledLevels(rows: FeatureRow[], treeCols: string[]): Map<number, string[]> {
+  const last: (string | null)[] = new Array(treeCols.length).fill(null);
+  const map = new Map<number, string[]>();
+  for (const row of rows) {
+    const rec = row as unknown as Record<string, string | number | null | undefined>;
+    const filled: string[] = new Array(treeCols.length).fill("");
+    for (let idx = 0; idx < treeCols.length; idx++) {
+      const field = treeCols[idx];
+      const own = rec[field];
+      const ownStr = own != null && String(own).trim() !== "" ? String(own).trim() : null;
+
+      if (NON_HIERARCHY_TREE_FIELDS.has(field)) {
+        // Version/source are per-row metadata, not a nesting level -- a
+        // version bump on an otherwise-unrelated row doesn't mean the
+        // feature group changed, so these carry only their own value
+        // (no inheritance) and must NOT trigger the hierarchy reset below --
+        // almost every row has its own version number, so treating it like
+        // a hierarchy column would reset Level3-9 on nearly every row.
+        filled[idx] = ownStr ?? "";
+        continue;
+      }
+      if (ownStr) {
+        last[idx] = ownStr;
+        for (let k = idx + 1; k < treeCols.length; k++) last[k] = null;
+      }
+      filled[idx] = last[idx] ?? "";
+    }
+    map.set(row.row, filled);
+  }
+  return map;
 }
 
 interface ChatMessage {
@@ -176,6 +245,111 @@ function FloatingLabelInput({
       >
         {label}
       </label>
+    </div>
+  );
+}
+
+/** MUI-style outlined multi-select with an autocomplete search box in its
+ * dropdown -- used for Product Group/Sub Group/Product, where the useful
+ * interaction is "pick one or more of a known set of values" rather than
+ * free-text substring search. Options are exact values from the data (model
+ * family/segment/key), so selection is exact-membership, not substring --
+ * the search box inside the panel only narrows which options are shown. */
+function MultiSelectAutocomplete({
+  id,
+  label,
+  options,
+  selected,
+  onChange,
+  disabled,
+  className,
+}: {
+  id: string;
+  label: string;
+  options: string[];
+  selected: string[];
+  onChange: (next: string[]) => void;
+  disabled?: boolean;
+  className?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onPointerDown(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+        setQuery("");
+      }
+    }
+    document.addEventListener("mousedown", onPointerDown);
+    return () => document.removeEventListener("mousedown", onPointerDown);
+  }, [open]);
+
+  const filteredOptions = options.filter((o) => o.toLowerCase().includes(query.trim().toLowerCase()));
+  const hasValue = selected.length > 0;
+  const displayValue = selected.length === 0 ? "" : selected.length === 1 ? selected[0] : `${selected.length} selected`;
+
+  function toggle(opt: string) {
+    onChange(selected.includes(opt) ? selected.filter((s) => s !== opt) : [...selected, opt]);
+  }
+
+  return (
+    <div ref={containerRef} className={`relative min-w-[172px] ${className ?? ""}`}>
+      <button
+        type="button"
+        id={id}
+        disabled={disabled}
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between gap-1 rounded-lg border border-black/20 bg-transparent px-3 py-2 text-left text-sm text-ink outline-none transition-colors hover:border-black/35 focus:border-brand disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        <span className="truncate">{displayValue}</span>
+        <ChevronDown size={14} className="shrink-0 text-muted" />
+      </button>
+      <label
+        htmlFor={id}
+        className={`pointer-events-none absolute left-2.5 rounded bg-surface px-1 transition-all ${
+          hasValue || open
+            ? "top-0 -translate-y-1/2 text-xs font-medium text-ink"
+            : "top-1/2 -translate-y-1/2 text-sm text-muted"
+        }`}
+      >
+        {label}
+      </label>
+      {open && (
+        <div className="absolute left-0 top-full z-40 mt-1 w-56 rounded-lg border border-black/10 bg-surface shadow-lg">
+          <input
+            autoFocus
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={`Search ${label.toLowerCase()}…`}
+            className="w-full rounded-t-lg border-b border-black/10 px-3 py-2 text-sm outline-none"
+          />
+          <div className="max-h-56 overflow-y-auto p-1">
+            {filteredOptions.length === 0 && <p className="px-2 py-1.5 text-xs text-muted">No matches</p>}
+            {filteredOptions.map((opt) => (
+              <label
+                key={opt}
+                className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-sm text-ink hover:bg-panel"
+              >
+                <input type="checkbox" checked={selected.includes(opt)} onChange={() => toggle(opt)} />
+                {opt}
+              </label>
+            ))}
+          </div>
+          {hasValue && (
+            <button
+              type="button"
+              onClick={() => onChange([])}
+              className="w-full rounded-b-lg border-t border-black/10 px-3 py-1.5 text-left text-xs font-medium text-muted hover:bg-panel hover:text-ink"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -337,8 +511,21 @@ export function IaDocumentationWorkspace() {
   const [tabData, setTabData] = useState<TabData | null>(null);
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [modelFilter, setModelFilter] = useState("");
   const [rowSearch, setRowSearch] = useState("");
+  /** Multi-select autocomplete filters over the model/product header
+   * structure -- family ("Product Group", e.g. "ProSelect/Hybrid/Esnl
+   * Enhanced"), segment ("Product Sub Group 1", e.g. "SMB/Pro", "CISS"),
+   * engine class ("Product Sub Group 2", e.g. "MFP-Color 2.4""), and model
+   * name ("Product"). Each holds exact selected values (not free text) -- a
+   * model must match every non-empty filter's selected set. All four
+   * mutually cross-filter each other's *options* (see matchingModels) --
+   * picking a Product narrows what Product Sub Group 2 offers to that
+   * product's own engine class(es), and picking a sub group narrows Product
+   * the same way, in every direction. */
+  const [familyFilter, setFamilyFilter] = useState<string[]>([]);
+  const [segmentFilter, setSegmentFilter] = useState<string[]>([]);
+  const [engineClassFilter, setEngineClassFilter] = useState<string[]>([]);
+  const [modelFilter, setModelFilter] = useState<string[]>([]);
 
   const [editMode, setEditMode] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
@@ -348,6 +535,14 @@ export function IaDocumentationWorkspace() {
   const [zoom, setZoom] = useState(100);
   const [showFillPalette, setShowFillPalette] = useState(false);
   const [paintColor, setPaintColor] = useState<string | null>(null);
+  /** Row ids currently highlighted from a tree-cell click -- the clicked
+   * row plus every row nested under it at that same level (see
+   * highlightSubtree), so clicking "Sleep" visually marks it and everything
+   * under it (1 Minute, 5 Minutes, ...), not just the one row. Separate from
+   * selectedRows (checkbox selection for bulk delete, edit-mode only) --
+   * this is a plain "show me the scope of this group" visual aid, available
+   * whether or not Edit is on. */
+  const [highlightedRows, setHighlightedRows] = useState<Set<number>>(new Set());
   /** Manually-resized column widths (px), keyed by the same colId scheme as
    * customBg ("level2", "models.<key>", "componentSetting.<label>",
    * "quickSets.<key>", "epicStory", "designNotes"). Absent entries keep
@@ -356,6 +551,18 @@ export function IaDocumentationWorkspace() {
    * waste space matching its neighbors' width; still user-resizable from
    * there like any other column. */
   const [colWidths, setColWidths] = useState<Record<string, number>>({ source: 50 });
+  /** Left-offset (px) of each frozen tree column, measured from the actual
+   * rendered header cells rather than assumed -- columns are naturally- or
+   * manually-resized (colWidths), so a hardcoded width table would drift out
+   * of sync with what's really on screen. Recomputed whenever anything that
+   * can change a column's rendered width changes (see the effect below). */
+  const treeHeaderCellRefs = useRef<(HTMLTableCellElement | null)[]>([]);
+  const [treeColLeft, setTreeColLeft] = useState<number[]>([]);
+  /** Refs backing the "Scroll to Components" button -- gridScrollRef is the
+   * actual scrollable element, componentsBandRef is the "Components: Setting
+   * row" header cell to scroll into view. */
+  const gridScrollRef = useRef<HTMLDivElement | null>(null);
+  const componentsBandRef = useRef<HTMLTableCellElement | null>(null);
 
   const [showAddRow, setShowAddRow] = useState(false);
   const [newRowName, setNewRowName] = useState("");
@@ -420,27 +627,157 @@ export function IaDocumentationWorkspace() {
         setCompareMode(false);
         setEditMode(false);
         setRowSearch("");
-        setModelFilter("");
+        setModelFilter([]);
+        setFamilyFilter([]);
+        setSegmentFilter([]);
+        setEngineClassFilter([]);
       });
     fetch(`/api/ia-documentation/tab/${encodeURIComponent(activeTab)}/audit`)
       .then((res) => (res.ok ? res.json() : []))
       .then(setAuditLog);
   }, [activeTab]);
 
+  // Recomputes each frozen tree column's left offset from the actual
+  // rendered header cell widths -- runs after every commit where a column's
+  // width could plausibly have changed (resize drag, zoom, a different tab's
+  // columns, or new/removed rows changing content width).
+  useLayoutEffect(() => {
+    const cols = tabData?.featureTreeColumns ?? [];
+    const widths = cols.map((_, i) => treeHeaderCellRefs.current[i]?.offsetWidth ?? 0);
+    const lefts: number[] = [];
+    let acc = 0;
+    for (const w of widths) {
+      lefts.push(acc);
+      acc += w;
+    }
+    // Guarded with this comparison so it only actually updates state (and
+    // triggers a re-render) when an offset really changed, instead of
+    // looping forever re-rendering itself.
+    setTreeColLeft((prev) =>
+      prev.length === lefts.length && prev.every((v, i) => v === lefts[i]) ? prev : lefts
+    );
+  }, [tabData, colWidths, zoom]);
+
+  // Full mutual cross-filtering across all four model-facet selects: each
+  // facet's option list reflects the models that match every *other*
+  // currently-active facet (its own selection is deliberately excluded from
+  // narrowing its own options -- otherwise picking a value could make it
+  // disappear from its own list). Selecting a Product, for instance, narrows
+  // what Product Sub Group 2 offers to just that product's own engine
+  // class(es), not the tab's full set -- and the same applies in every
+  // direction between all four.
+  const matchingModels = useMemo(() => {
+    if (!tabData) return () => [] as ModelInfo[];
+    return (except: "family" | "segment" | "engineClass" | "model") =>
+      tabData.models.filter((m) => {
+        if (except !== "family" && familyFilter.length > 0 && !familyFilter.includes(m.family ?? "")) return false;
+        if (except !== "segment" && segmentFilter.length > 0 && !segmentFilter.includes(m.segment ?? "")) return false;
+        if (
+          except !== "engineClass" &&
+          engineClassFilter.length > 0 &&
+          !engineClassFilter.includes(m.engineClass ?? "")
+        )
+          return false;
+        if (except !== "model" && modelFilter.length > 0 && !modelFilter.includes(m.key)) return false;
+        return true;
+      });
+  }, [tabData, familyFilter, segmentFilter, engineClassFilter, modelFilter]);
+
+  const familyOptions = useMemo(
+    () => Array.from(new Set(matchingModels("family").map((m) => m.family).filter((v): v is string => Boolean(v)))),
+    [matchingModels]
+  );
+  const segmentOptions = useMemo(
+    () =>
+      Array.from(new Set(matchingModels("segment").map((m) => m.segment).filter((v): v is string => Boolean(v)))),
+    [matchingModels]
+  );
+  const engineClassOptions = useMemo(
+    () =>
+      Array.from(
+        new Set(matchingModels("engineClass").map((m) => m.engineClass).filter((v): v is string => Boolean(v)))
+      ),
+    [matchingModels]
+  );
+  const productOptions = useMemo(() => matchingModels("model").map((m) => m.key), [matchingModels]);
+
+  // Keeps a previously-selected value from silently continuing to filter the
+  // grid after it's fallen out of its own now-narrower option list (e.g.
+  // picked engine class "MFP-Color 2.4"", then narrowed Product to one that
+  // doesn't have that engine class) -- the checkbox would no longer be
+  // visible to uncheck, so drop it automatically instead of leaving an
+  // invisible filter active. One effect per facet, each only touching its
+  // own state, so this can't loop -- every pass only ever removes values.
+  useEffect(() => {
+    setFamilyFilter((prev) => {
+      const next = prev.filter((v) => familyOptions.includes(v));
+      return next.length === prev.length ? prev : next;
+    });
+  }, [familyOptions]);
+  useEffect(() => {
+    setSegmentFilter((prev) => {
+      const next = prev.filter((v) => segmentOptions.includes(v));
+      return next.length === prev.length ? prev : next;
+    });
+  }, [segmentOptions]);
+  useEffect(() => {
+    setEngineClassFilter((prev) => {
+      const next = prev.filter((v) => engineClassOptions.includes(v));
+      return next.length === prev.length ? prev : next;
+    });
+  }, [engineClassOptions]);
+  useEffect(() => {
+    setModelFilter((prev) => {
+      const next = prev.filter((key) => productOptions.includes(key));
+      return next.length === prev.length ? prev : next;
+    });
+  }, [productOptions]);
+
   const visibleModels = useMemo(() => {
     if (!tabData) return [];
     if (compareMode) return tabData.models.filter((m) => selectedModels.has(m.key));
-    const q = modelFilter.trim().toLowerCase();
-    if (!q) return tabData.models;
-    return tabData.models.filter((m) => m.key.toLowerCase().includes(q));
-  }, [tabData, modelFilter, compareMode, selectedModels]);
+    if (
+      familyFilter.length === 0 &&
+      segmentFilter.length === 0 &&
+      engineClassFilter.length === 0 &&
+      modelFilter.length === 0
+    ) {
+      return tabData.models;
+    }
+    return tabData.models.filter((m) => {
+      if (familyFilter.length > 0 && !familyFilter.includes(m.family ?? "")) return false;
+      if (segmentFilter.length > 0 && !segmentFilter.includes(m.segment ?? "")) return false;
+      if (engineClassFilter.length > 0 && !engineClassFilter.includes(m.engineClass ?? "")) return false;
+      if (modelFilter.length > 0 && !modelFilter.includes(m.key)) return false;
+      return true;
+    });
+  }, [tabData, modelFilter, familyFilter, segmentFilter, engineClassFilter, compareMode, selectedModels]);
+
+  // Effective (forward-filled) group/subgroup/.../feature path per row --
+  // see computeFilledLevels' doc comment. Recomputed only when the tab's raw
+  // rows change, not on every filter keystroke. Used only to make Feature
+  // search nested-aware (see visibleRows below) -- there's no dropdown tied
+  // to this anymore.
+  const filledLevels = useMemo(() => {
+    if (!tabData) return new Map<number, string[]>();
+    return computeFilledLevels(tabData.rows, tabData.featureTreeColumns);
+  }, [tabData]);
 
   const visibleRows = useMemo(() => {
     if (!tabData) return [];
-    const terms = rowSearch.trim().toLowerCase().split(/\s+/).filter(Boolean);
-    if (terms.length === 0) return tabData.rows;
-    return tabData.rows.filter((r) => matchesSearch(r, terms));
-  }, [tabData, rowSearch]);
+    const q = rowSearch.trim().toLowerCase();
+    if (!q) return tabData.rows;
+
+    return tabData.rows.filter((row) => {
+      const filled = filledLevels.get(row.row) ?? [];
+      // Search the forward-filled path as one contiguous phrase, not split
+      // into individual words -- searching "Scan to Email" must match that
+      // exact phrase (plus anything nested under it via the forward-fill),
+      // not any row containing "scan" or "to" or "email" separately.
+      const text = filled.filter(Boolean).join(" ").toLowerCase();
+      return text.includes(q);
+    });
+  }, [tabData, rowSearch, filledLevels]);
 
   // Tabs converted with original-sheet style capture (currently 2-Line IA)
   // render as a faithful reproduction of the source xlsx -- separate Level
@@ -460,9 +797,15 @@ export function IaDocumentationWorkspace() {
   // models differently -- if every model shares one segment value (like
   // 2-Line IA's "POLESTAR"), showing it as a row is redundant, not
   // informative, which is why that row was removed there earlier.
-  const hasEngineClassRow = visibleModels.some((m) => m.engineClass);
-  const distinctSegments = new Set(visibleModels.map((m) => m.segment).filter(Boolean));
-  const hasSegmentRow = distinctSegments.size > 1;
+  //
+  // Deliberately based on the tab's FULL model list (tabData.models), not
+  // the currently-filtered visibleModels -- these flags describe whether
+  // this *tab* has that kind of column at all, not whether the current
+  // filter happened to leave more than one distinct value visible. Basing
+  // it on visibleModels meant filtering Product Sub Group down to a single
+  // matching segment hid the very segment band the user just searched for.
+  const hasEngineClassRow = (tabData?.models ?? []).some((m) => m.engineClass);
+  const hasSegmentRow = segmentOptions.length > 1;
   const hasQuickSets = (tabData?.quickSetColumns?.length ?? 0) > 0;
   const hasComponents = (tabData?.componentColumns?.length ?? 0) > 0;
   const hasEpicColumn = Boolean(tabData?.headerStyle?.epicBandFill || tabData?.headerStyle?.epicLabel);
@@ -481,11 +824,31 @@ export function IaDocumentationWorkspace() {
   ] as const;
   const nameRowIndex = headerRowKeys.indexOf("name");
   const ROW_HEIGHT_PX = 26;
+  /** Grid viewport height. CSS `zoom` (applied to this same element below)
+   * scales the element's own box, not just its content -- a plain fixed
+   * "70vh" would actually render at 70vh * (zoom/100) on screen, so at 150%
+   * zoom the box balloons to ~105vh and overflows the page, and at 60% it
+   * shrinks to ~42vh and wastes space. Dividing the target by (zoom/100)
+   * before zoom is applied cancels that scaling out, so the box occupies a
+   * steady ~78vh of actual screen space at any zoom level -- zooming in
+   * still makes rows visually bigger (so more scrolling is needed to see
+   * them all), but the viewport box itself stays a predictable size. */
+  const RENDERED_GRID_HEIGHT_VH = 78;
+  const GRID_HEIGHT_VH = RENDERED_GRID_HEIGHT_VH / (zoom / 100);
 
-  const filtersActive = modelFilter.trim() !== "" || rowSearch.trim() !== "" || compareMode;
+  const filtersActive =
+    modelFilter.length > 0 ||
+    familyFilter.length > 0 ||
+    segmentFilter.length > 0 ||
+    engineClassFilter.length > 0 ||
+    rowSearch.trim() !== "" ||
+    compareMode;
 
   function resetFilters() {
-    setModelFilter("");
+    setModelFilter([]);
+    setFamilyFilter([]);
+    setSegmentFilter([]);
+    setEngineClassFilter([]);
     setRowSearch("");
     setCompareMode(false);
     setSelectedModels(new Set());
@@ -519,6 +882,69 @@ export function IaDocumentationWorkspace() {
         r.row === rowId ? { ...r, componentSetting: { ...r.componentSetting, [label]: value } } : r
       ),
     }));
+  }
+
+  /** Clicking a tree-level cell (Version, source, Level2..N) highlights that
+   * row plus its whole nested subtree -- every row immediately before/after
+   * it in table order that shares the same forward-filled value at the
+   * clicked column (see computeFilledLevels), i.e. exactly the visual group
+   * the source sheet's merged cells represent. Clicking the same group's
+   * anchor again toggles the highlight off. No-ops while the paint tool is
+   * active (that click means "paint this cell", not "select this group"). */
+  function highlightSubtree(rowId: number, colIdx: number) {
+    if (!tabData) return;
+    const rows = tabData.rows;
+    const idx = rows.findIndex((r) => r.row === rowId);
+    if (idx === -1) return;
+
+    const anchorValue = filledLevels.get(rowId)?.[colIdx] ?? "";
+    let ids: number[];
+    if (!anchorValue) {
+      ids = [rowId];
+    } else {
+      let start = idx;
+      while (start > 0 && (filledLevels.get(rows[start - 1].row)?.[colIdx] ?? "") === anchorValue) start--;
+      let end = idx;
+      while (end < rows.length - 1 && (filledLevels.get(rows[end + 1].row)?.[colIdx] ?? "") === anchorValue) end++;
+      ids = rows.slice(start, end + 1).map((r) => r.row);
+    }
+
+    setHighlightedRows((prev) => {
+      const isSameGroup = ids.length === prev.size && ids.every((id) => prev.has(id));
+      return isSameGroup ? new Set() : new Set(ids);
+    });
+  }
+
+  /** Background color for a cell: an explicit paint/style color always
+   * wins; otherwise a solid light gray shows when this row is part of the
+   * currently highlighted subtree (see highlightSubtree), so the highlight
+   * never hides a color the user (or the source sheet) actually set. Solid,
+   * not translucent -- several of these cells are frozen (position: sticky)
+   * and need an opaque background or scrolled content bleeds through them. */
+  function cellBg(explicit: string | null | undefined, rowId: number): string | undefined {
+    if (explicit) return explicit;
+    return highlightedRows.has(rowId) ? "#e2e4ea" : undefined;
+  }
+
+  /** Scrolls the grid horizontally so the "Components: Setting row" band
+   * comes into view -- computed from actual bounding boxes (not a stored
+   * offset) so it stays correct regardless of column resizing or which tree
+   * columns are currently frozen.
+   *
+   * The target position is the *right* edge of the last frozen tree column,
+   * not the container's own left edge (x=0) -- the frozen columns are
+   * pinned there via position:sticky and stay painted on top regardless of
+   * scroll position, so aligning the band with x=0 would only scroll it
+   * further, underneath them (i.e. overshoot past where it's actually
+   * visible) instead of stopping right where it first becomes visible. */
+  function scrollToComponents() {
+    const container = gridScrollRef.current;
+    const target = componentsBandRef.current;
+    if (!container || !target) return;
+    const lastTreeCell = treeHeaderCellRefs.current[treeHeaderCellRefs.current.length - 1];
+    const frozenRight = lastTreeCell?.getBoundingClientRect().right ?? container.getBoundingClientRect().left;
+    const delta = target.getBoundingClientRect().left - frozenRight;
+    container.scrollTo({ left: Math.max(0, container.scrollLeft + delta), behavior: "smooth" });
   }
 
   /** Applies (or clears, when paintColor is the ERASE sentinel) the active
@@ -566,6 +992,20 @@ export function IaDocumentationWorkspace() {
   function colWidthStyle(colId: string): React.CSSProperties {
     const w = colWidths[colId];
     if (!w) return {};
+    return { width: w, minWidth: w, maxWidth: w };
+  }
+
+  /** Same as colWidthStyle, but for frozen tree columns specifically: falls
+   * back to a compact default instead of natural content-driven sizing.
+   * Left unconstrained, some of these columns' widest cell across 1000+ rows
+   * is genuinely several hundred px (long feature text) -- fine when they
+   * scroll normally, but once every tree column is frozen (see treeColLeft),
+   * their natural widths stack up and can eat the entire viewport before a
+   * single product column becomes visible, which defeats the point of
+   * freezing them. Still fully user-resizable via the normal drag handle,
+   * same as every other column -- this only changes the *default*. */
+  function treeColWidthStyle(colId: string): React.CSSProperties {
+    const w = colWidths[colId] ?? DEFAULT_TREE_COL_WIDTH[colId] ?? DEFAULT_TREE_COL_WIDTH.__level__;
     return { width: w, minWidth: w, maxWidth: w };
   }
 
@@ -1152,9 +1592,229 @@ export function IaDocumentationWorkspace() {
 
   return (
     <div className="flex min-w-0 flex-col gap-4">
-      {/* Toolbar -- grouped into clusters (view / edit / zoom / actions),
-          separated by hairline dividers so it reads like a proper app
-          toolbar instead of one long undifferentiated row. */}
+      {/* Breadcrumb (left) + action panel (right) -- Edit/Zoom/Export/
+          Co-pilot all live here now, opposite the breadcrumb, separate from
+          the view/filter toolbar below. */}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2 text-sm text-muted">
+          <Link href="/" className="hover:text-ink hover:underline">
+            All Agents
+          </Link>
+          <span>/</span>
+          <span className="text-ink">IA Documentation</span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-1.5 rounded-2xl bg-surface p-2.5 shadow-sm">
+          {/* Edit group -- +Row/+Column/Delete/Fill/Save only appear once
+              Editing is on, so the panel stays uncluttered until you
+              actually need those actions. */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            <button
+              onClick={() =>
+                setEditMode((v) => {
+                  if (v) {
+                    setPaintColor(null);
+                    setShowFillPalette(false);
+                  }
+                  return !v;
+                })
+              }
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
+                editMode ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
+              }`}
+            >
+              <Pencil size={14} />
+              {editMode ? "Editing" : "Edit"}
+            </button>
+
+            {editMode && (
+              <>
+                <button
+                  onClick={() => setShowAddRow((v) => !v)}
+                  className="rounded-lg bg-panel px-3 py-1.5 text-sm font-medium text-ink hover:bg-black/5"
+                >
+                  + Row
+                </button>
+                <button
+                  onClick={() => setShowAddCol((v) => !v)}
+                  className="rounded-lg bg-panel px-3 py-1.5 text-sm font-medium text-ink hover:bg-black/5"
+                >
+                  + Column
+                </button>
+                <button
+                  onClick={deleteSelectedRows}
+                  disabled={selectedRows.size === 0}
+                  className="flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-40 dark:bg-red-950/40 dark:text-red-400"
+                >
+                  <Trash2 size={14} />
+                  Rows {selectedRows.size > 0 ? `(${selectedRows.size})` : ""}
+                </button>
+                <button
+                  onClick={deleteSelectedColumns}
+                  disabled={selectedModels.size === 0}
+                  className="flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-40 dark:bg-red-950/40 dark:text-red-400"
+                >
+                  <Trash2 size={14} />
+                  Columns {selectedModels.size > 0 ? `(${selectedModels.size})` : ""}
+                </button>
+
+                <div className="relative">
+                  <button
+                    onClick={() => setShowFillPalette((v) => !v)}
+                    title="Fill color"
+                    className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
+                      paintColor ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
+                    }`}
+                  >
+                    <PaintBucket size={14} />
+                    <span
+                      className="h-3 w-3 rounded-sm border border-black/20"
+                      style={{
+                        backgroundColor:
+                          paintColor && paintColor !== ERASE_FILL ? paintColor : "transparent",
+                      }}
+                    />
+                  </button>
+                  {showFillPalette && (
+                    <div className="absolute right-0 top-full z-40 mt-1 grid w-40 grid-cols-6 gap-1 rounded-lg border border-black/10 bg-surface p-2 shadow-lg">
+                      {FILL_PALETTE.map((color) => (
+                        <button
+                          key={color}
+                          title={color}
+                          onClick={() => {
+                            setPaintColor(color);
+                            setShowFillPalette(false);
+                          }}
+                          className="h-5 w-5 rounded border border-black/10"
+                          style={{ backgroundColor: color }}
+                        />
+                      ))}
+                      <input
+                        type="color"
+                        title="Custom color"
+                        onChange={(e) => {
+                          setPaintColor(e.target.value);
+                          setShowFillPalette(false);
+                        }}
+                        className="h-5 w-5 cursor-pointer rounded border border-black/10 p-0"
+                      />
+                      <button
+                        title="No fill (click cells to clear their color)"
+                        onClick={() => {
+                          setPaintColor(ERASE_FILL);
+                          setShowFillPalette(false);
+                        }}
+                        className="flex h-5 w-5 items-center justify-center rounded border border-black/10"
+                      >
+                        <Ban size={12} className="text-muted" />
+                      </button>
+                      {paintColor && (
+                        <button
+                          onClick={() => {
+                            setPaintColor(null);
+                            setShowFillPalette(false);
+                          }}
+                          className="col-span-6 mt-1 rounded bg-panel py-1 text-[11px] font-medium text-ink hover:bg-black/5"
+                        >
+                          Stop painting
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+                {paintColor && (
+                  <span className="text-xs text-muted">
+                    {paintColor === ERASE_FILL ? "Click cells to clear fill" : "Click cells to fill"}
+                  </span>
+                )}
+
+                <button
+                  onClick={saveChanges}
+                  disabled={!dirty || saving}
+                  className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-40"
+                >
+                  <Save size={14} />
+                  {saving ? "Saving…" : dirty ? "Save changes" : "Saved"}
+                </button>
+              </>
+            )}
+          </div>
+
+          <div className="mx-1 h-6 w-px shrink-0 bg-black/10" />
+
+          {/* Zoom group */}
+          <div className="flex items-center gap-1 rounded-lg bg-panel px-1 py-1">
+            <button
+              onClick={() => setZoom((z) => Math.max(ZOOM_MIN, z - ZOOM_STEP))}
+              disabled={zoom <= ZOOM_MIN}
+              title="Zoom out"
+              className="rounded-md p-1.5 text-ink hover:bg-black/5 disabled:opacity-40"
+            >
+              <ZoomOut size={14} />
+            </button>
+            <button
+              onClick={() => setZoom(100)}
+              title="Reset zoom"
+              className="w-11 text-center text-xs font-medium text-ink hover:underline"
+            >
+              {zoom}%
+            </button>
+            <button
+              onClick={() => setZoom((z) => Math.min(ZOOM_MAX, z + ZOOM_STEP))}
+              disabled={zoom >= ZOOM_MAX}
+              title="Zoom in"
+              className="rounded-md p-1.5 text-ink hover:bg-black/5 disabled:opacity-40"
+            >
+              <ZoomIn size={14} />
+            </button>
+          </div>
+
+          {Object.keys(colWidths).length > 0 && (
+            <button
+              onClick={() => setColWidths({})}
+              title="Reset all manually-resized column widths"
+              className="rounded-lg px-2 py-1.5 text-xs font-medium text-muted hover:bg-black/5 hover:text-ink"
+            >
+              Reset widths
+            </button>
+          )}
+
+          <div className="mx-1 h-6 w-px shrink-0 bg-black/10" />
+
+          {/* Export / panels group */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            <button
+              onClick={exportToXlsx}
+              className="flex items-center gap-1.5 rounded-lg bg-panel px-3 py-1.5 text-sm font-medium text-ink hover:bg-black/5"
+            >
+              <Download size={14} />
+              Excel
+            </button>
+
+            <button
+              onClick={() => setShowAudit((v) => !v)}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
+                showAudit ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
+              }`}
+            >
+              <History size={14} />
+              Audit Log {auditLog.length > 0 ? `(${auditLog.length})` : ""}
+            </button>
+
+            <button
+              onClick={() => setCopilotOpen((v) => !v)}
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
+                copilotOpen ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
+              }`}
+            >
+              <Bot size={14} />
+              AAVA Co-pilot
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* View / filter toolbar */}
       <div className="flex flex-wrap items-center gap-1.5 rounded-2xl bg-surface p-2.5 shadow-sm">
         {/* View / filter group */}
         <div className="flex flex-wrap items-center gap-1.5">
@@ -1170,30 +1830,72 @@ export function IaDocumentationWorkspace() {
             ))}
           </select>
 
-          <FloatingLabelInput
-            id="model-filter"
-            label="Product"
-            value={modelFilter}
-            onChange={setModelFilter}
-            disabled={compareMode}
-          />
-
+          {/* Feature -- plain substring search over the row/tree side --
+              comes first, ahead of the model-header facets below. */}
           <FloatingLabelInput
             id="row-search"
-            label="Features"
+            label="Feature"
             value={rowSearch}
             onChange={setRowSearch}
             className="min-w-[180px]"
           />
 
-          <button
+          {/* Multi-select autocomplete over the model/product header
+              structure -- family ("Product Group"), segment ("Product Sub
+              Group 1") and engine class ("Product Sub Group 2"), each only
+              shown when this tab actually has more than one distinct value
+              to group by, and model name ("Product"). All four cross-filter
+              each other mutually -- see matchingModels -- so picking a
+              product narrows the sub group options down to just what that
+              product actually has, and vice versa. */}
+          <MultiSelectAutocomplete
+            id="family-filter"
+            label="Product Group"
+            options={familyOptions}
+            selected={familyFilter}
+            onChange={setFamilyFilter}
+            disabled={compareMode}
+          />
+
+          {segmentOptions.length > 1 && (
+            <MultiSelectAutocomplete
+              id="segment-filter"
+              label="Product Sub Group"
+              options={segmentOptions}
+              selected={segmentFilter}
+              onChange={setSegmentFilter}
+              disabled={compareMode}
+            />
+          )}
+
+          <MultiSelectAutocomplete
+            id="model-filter"
+            label="Product"
+            options={productOptions}
+            selected={modelFilter}
+            onChange={setModelFilter}
+            disabled={compareMode}
+          />
+
+          {engineClassOptions.length > 1 && (
+            <MultiSelectAutocomplete
+              id="engine-class-filter"
+              label="Product Sub Group"
+              options={engineClassOptions}
+              selected={engineClassFilter}
+              onChange={setEngineClassFilter}
+              disabled={compareMode}
+            />
+          )}
+
+          {/* <button
             onClick={() => setCompareMode((v) => !v)}
             className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
               compareMode ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
             }`}
           >
             Compare {selectedModels.size > 0 ? `(${selectedModels.size})` : ""}
-          </button>
+          </button> */}
 
           {filtersActive && (
             <button
@@ -1203,215 +1905,6 @@ export function IaDocumentationWorkspace() {
               Reset
             </button>
           )}
-        </div>
-
-        <div className="mx-1 h-6 w-px shrink-0 bg-black/10" />
-
-        {/* Edit group -- +Row/+Column/Delete/Fill/Save only appear once
-            Editing is on, so the toolbar stays uncluttered until you
-            actually need those actions. */}
-        <div className="flex flex-wrap items-center gap-1.5">
-          <button
-            onClick={() =>
-              setEditMode((v) => {
-                if (v) {
-                  setPaintColor(null);
-                  setShowFillPalette(false);
-                }
-                return !v;
-              })
-            }
-            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
-              editMode ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
-            }`}
-          >
-            <Pencil size={14} />
-            {editMode ? "Editing" : "Edit"}
-          </button>
-
-          {editMode && (
-            <>
-              <button
-                onClick={() => setShowAddRow((v) => !v)}
-                className="rounded-lg bg-panel px-3 py-1.5 text-sm font-medium text-ink hover:bg-black/5"
-              >
-                + Row
-              </button>
-              <button
-                onClick={() => setShowAddCol((v) => !v)}
-                className="rounded-lg bg-panel px-3 py-1.5 text-sm font-medium text-ink hover:bg-black/5"
-              >
-                + Column
-              </button>
-              <button
-                onClick={deleteSelectedRows}
-                disabled={selectedRows.size === 0}
-                className="flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-40 dark:bg-red-950/40 dark:text-red-400"
-              >
-                <Trash2 size={14} />
-                Rows {selectedRows.size > 0 ? `(${selectedRows.size})` : ""}
-              </button>
-              <button
-                onClick={deleteSelectedColumns}
-                disabled={selectedModels.size === 0}
-                className="flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-40 dark:bg-red-950/40 dark:text-red-400"
-              >
-                <Trash2 size={14} />
-                Columns {selectedModels.size > 0 ? `(${selectedModels.size})` : ""}
-              </button>
-
-              <div className="relative">
-                <button
-                  onClick={() => setShowFillPalette((v) => !v)}
-                  title="Fill color"
-                  className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
-                    paintColor ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
-                  }`}
-                >
-                  <PaintBucket size={14} />
-                  <span
-                    className="h-3 w-3 rounded-sm border border-black/20"
-                    style={{
-                      backgroundColor:
-                        paintColor && paintColor !== ERASE_FILL ? paintColor : "transparent",
-                    }}
-                  />
-                </button>
-                {showFillPalette && (
-                  <div className="absolute left-0 top-full z-40 mt-1 grid w-40 grid-cols-6 gap-1 rounded-lg border border-black/10 bg-surface p-2 shadow-lg">
-                    {FILL_PALETTE.map((color) => (
-                      <button
-                        key={color}
-                        title={color}
-                        onClick={() => {
-                          setPaintColor(color);
-                          setShowFillPalette(false);
-                        }}
-                        className="h-5 w-5 rounded border border-black/10"
-                        style={{ backgroundColor: color }}
-                      />
-                    ))}
-                    <input
-                      type="color"
-                      title="Custom color"
-                      onChange={(e) => {
-                        setPaintColor(e.target.value);
-                        setShowFillPalette(false);
-                      }}
-                      className="h-5 w-5 cursor-pointer rounded border border-black/10 p-0"
-                    />
-                    <button
-                      title="No fill (click cells to clear their color)"
-                      onClick={() => {
-                        setPaintColor(ERASE_FILL);
-                        setShowFillPalette(false);
-                      }}
-                      className="flex h-5 w-5 items-center justify-center rounded border border-black/10"
-                    >
-                      <Ban size={12} className="text-muted" />
-                    </button>
-                    {paintColor && (
-                      <button
-                        onClick={() => {
-                          setPaintColor(null);
-                          setShowFillPalette(false);
-                        }}
-                        className="col-span-6 mt-1 rounded bg-panel py-1 text-[11px] font-medium text-ink hover:bg-black/5"
-                      >
-                        Stop painting
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-              {paintColor && (
-                <span className="text-xs text-muted">
-                  {paintColor === ERASE_FILL ? "Click cells to clear fill" : "Click cells to fill"}
-                </span>
-              )}
-
-              <button
-                onClick={saveChanges}
-                disabled={!dirty || saving}
-                className="flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-40"
-              >
-                <Save size={14} />
-                {saving ? "Saving…" : dirty ? "Save changes" : "Saved"}
-              </button>
-            </>
-          )}
-        </div>
-
-        <div className="mx-1 h-6 w-px shrink-0 bg-black/10" />
-
-        {/* Zoom group */}
-        <div className="flex items-center gap-1 rounded-lg bg-panel px-1 py-1">
-          <button
-            onClick={() => setZoom((z) => Math.max(ZOOM_MIN, z - ZOOM_STEP))}
-            disabled={zoom <= ZOOM_MIN}
-            title="Zoom out"
-            className="rounded-md p-1.5 text-ink hover:bg-black/5 disabled:opacity-40"
-          >
-            <ZoomOut size={14} />
-          </button>
-          <button
-            onClick={() => setZoom(100)}
-            title="Reset zoom"
-            className="w-11 text-center text-xs font-medium text-ink hover:underline"
-          >
-            {zoom}%
-          </button>
-          <button
-            onClick={() => setZoom((z) => Math.min(ZOOM_MAX, z + ZOOM_STEP))}
-            disabled={zoom >= ZOOM_MAX}
-            title="Zoom in"
-            className="rounded-md p-1.5 text-ink hover:bg-black/5 disabled:opacity-40"
-          >
-            <ZoomIn size={14} />
-          </button>
-        </div>
-
-        {Object.keys(colWidths).length > 0 && (
-          <button
-            onClick={() => setColWidths({})}
-            title="Reset all manually-resized column widths"
-            className="rounded-lg px-2 py-1.5 text-xs font-medium text-muted hover:bg-black/5 hover:text-ink"
-          >
-            Reset widths
-          </button>
-        )}
-
-        <div className="mx-1 h-6 w-px shrink-0 bg-black/10" />
-
-        {/* Export / panels group */}
-        <div className="flex flex-wrap items-center gap-1.5">
-          <button
-            onClick={exportToXlsx}
-            className="flex items-center gap-1.5 rounded-lg bg-panel px-3 py-1.5 text-sm font-medium text-ink hover:bg-black/5"
-          >
-            <Download size={14} />
-            Excel
-          </button>
-
-          <button
-            onClick={() => setShowAudit((v) => !v)}
-            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
-              showAudit ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
-            }`}
-          >
-            <History size={14} />
-            Audit Log {auditLog.length > 0 ? `(${auditLog.length})` : ""}
-          </button>
-
-          <button
-            onClick={() => setCopilotOpen((v) => !v)}
-            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium ${
-              copilotOpen ? "bg-brand text-white" : "bg-panel text-ink hover:bg-black/5"
-            }`}
-          >
-            <Bot size={14} />
-            AAVA Co-pilot
-          </button>
         </div>
 
         {tabData && (
@@ -1596,11 +2089,15 @@ export function IaDocumentationWorkspace() {
           {!tabData ? (
             <p className="p-3 text-sm text-muted">Select a tab to view its data.</p>
           ) : visibleRows.length === 0 ? (
-            <p className="p-3 text-sm text-muted">No rows match &quot;{rowSearch}&quot;.</p>
+            <p className="p-3 text-sm text-muted">
+              No rows match the current filters
+              {rowSearch.trim() ? ` "${rowSearch}"` : ""}.
+            </p>
           ) : hasOriginalStyle ? (
             <div
-              className="h-[70vh] w-full overflow-auto rounded-xl"
-              style={{ zoom: `${zoom}%` }}
+              ref={gridScrollRef}
+              className="w-full overflow-auto rounded-xl"
+              style={{ height: `${GRID_HEIGHT_VH}vh`, zoom: `${zoom}%` }}
             >
               <table className="w-full border-collapse text-left text-xs">
                 <thead>
@@ -1609,22 +2106,38 @@ export function IaDocumentationWorkspace() {
                     const remainingRows = headerRowKeys.length - rowIndex;
                     return (
                       <tr key={rowKey}>
-                        {rowIndex === 0 &&
-                          nameRowIndex > 0 &&
-                          treeLabels.map((_, i) => (
-                            <th
-                              key={`tree-filler-${i}`}
-                              rowSpan={nameRowIndex}
-                              className="whitespace-nowrap px-1.5 py-1 font-semibold"
-                              style={{
-                                backgroundColor: tabData.headerStyle?.treeHeaderFill ?? undefined,
-                                position: "sticky",
-                                top: 0,
-                                left: i === 0 ? 0 : undefined,
-                                zIndex: i === 0 ? 30 : 20,
-                              }}
-                            />
-                          ))}
+                        {/* One cell spanning the whole frozen tree-columns width, not one
+                            per column -- the entire frozen region always scrolls (or rather,
+                            stays put) as a single unit, so there's no need for per-column
+                            slices here the way the body/labeled rows need for independent
+                            resize. This also gives the "Scroll to Components" button (below)
+                            the full width to sit in instead of being cramped into whatever
+                            the first tree column's own width happens to be. */}
+                        {rowIndex === 0 && nameRowIndex > 0 && (
+                          <th
+                            colSpan={treeLabels.length}
+                            rowSpan={nameRowIndex}
+                            className="whitespace-nowrap bg-surface px-1.5 py-1 text-left font-semibold"
+                            style={{
+                              backgroundColor: tabData.headerStyle?.treeHeaderFill ?? undefined,
+                              position: "sticky",
+                              top: 0,
+                              left: 0,
+                              zIndex: 30,
+                            }}
+                          >
+                            {hasComponents && (
+                              <button
+                                type="button"
+                                onClick={scrollToComponents}
+                                title="Scroll to the Components section"
+                                className="rounded-md border border-white/20 bg-white/10 px-2 py-1 text-[11px] font-medium text-white hover:bg-white/20"
+                              >
+                                Scroll to Components
+                              </button>
+                            )}
+                          </th>
+                        )}
 
                         {rowKey === "name" &&
                           treeLabels.map((label, i) => {
@@ -1632,17 +2145,21 @@ export function IaDocumentationWorkspace() {
                             return (
                               <th
                                 key={`tree-${i}`}
+                                ref={(el) => {
+                                  treeHeaderCellRefs.current[i] = el;
+                                }}
                                 data-col={colId}
+                                title={label}
                                 rowSpan={headerRowKeys.length - nameRowIndex}
-                                className="relative whitespace-nowrap border-b border-black/10 px-1.5 py-1 align-top font-semibold"
+                                className="relative overflow-hidden text-ellipsis whitespace-nowrap border-b border-black/10 bg-surface px-1.5 py-1 align-top font-semibold"
                                 style={{
                                   backgroundColor: tabData.headerStyle?.treeHeaderFill ?? undefined,
                                   color: tabData.headerStyle?.treeHeaderFill ? "#fff" : undefined,
                                   position: "sticky",
                                   top,
-                                  left: i === 0 ? 0 : undefined,
-                                  zIndex: i === 0 ? 30 : 20,
-                                  ...colWidthStyle(colId),
+                                  left: treeColLeft[i] ?? 0,
+                                  zIndex: 30,
+                                  ...treeColWidthStyle(colId),
                                 }}
                               >
                                 {i === 0 ? (
@@ -1797,8 +2314,8 @@ export function IaDocumentationWorkspace() {
                               rowSpan={remainingRows}
                               className="relative whitespace-nowrap border-b border-black/10 px-1.5 py-1 align-top font-semibold"
                               style={{
-                                backgroundColor: tabData.headerStyle?.treeHeaderFill ?? undefined,
-                                color: tabData.headerStyle?.treeHeaderFill ? "#fff" : undefined,
+                                backgroundColor: COMPONENTS_SUBHEADER_COLOR,
+                                color: "#fff",
                                 position: "sticky",
                                 top,
                                 zIndex: 20,
@@ -1867,11 +2384,12 @@ export function IaDocumentationWorkspace() {
 
                         {rowIndex === 0 && hasComponents && (
                           <th
+                            ref={componentsBandRef}
                             colSpan={tabData.componentColumns!.length}
                             rowSpan={nameRowIndex}
                             className="whitespace-nowrap border-b border-black/10 px-1.5 py-1 text-center font-semibold"
                             style={{
-                              backgroundColor: tabData.headerStyle?.componentsBandFill ?? undefined,
+                              backgroundColor: COMPONENTS_BAND_COLOR,
                               color: "#fff",
                               position: "sticky",
                               top: 0,
@@ -1974,17 +2492,21 @@ export function IaDocumentationWorkspace() {
                             <td
                               key={field}
                               data-col={field}
-                              onClick={() => paintCell(row.row, field)}
-                              className={`whitespace-nowrap border-b border-black/5 px-1.5 py-1 text-ink ${
+                              title={editMode ? undefined : String(value ?? "")}
+                              onClick={() => {
+                                if (editMode && paintColor) paintCell(row.row, field);
+                                else highlightSubtree(row.row, i);
+                              }}
+                              className={`cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap border-b border-black/5 bg-surface px-1.5 py-1 text-ink ${
                                 paintColor ? "cursor-crosshair" : ""
                               }`}
                               style={{
-                                backgroundColor: row.customBg?.[field] ?? style?.fill ?? undefined,
+                                backgroundColor: cellBg(row.customBg?.[field] ?? style?.fill, row.row),
                                 fontWeight: style?.bold ? 600 : undefined,
-                                position: i === 0 ? "sticky" : undefined,
-                                left: i === 0 ? 0 : undefined,
-                                zIndex: i === 0 ? 10 : undefined,
-                                ...colWidthStyle(field),
+                                position: "sticky",
+                                left: treeColLeft[i] ?? 0,
+                                zIndex: 10,
+                                ...treeColWidthStyle(field),
                               }}
                             >
                               {editMode ? (
@@ -2019,7 +2541,11 @@ export function IaDocumentationWorkspace() {
                               className={`border-b border-black/5 px-1.5 py-1 ${statusClass(value)} ${
                                 compareMismatch ? "bg-amber-100 dark:bg-amber-900/30" : ""
                               } ${paintColor ? "cursor-crosshair" : ""}`}
-                              style={{ backgroundColor: row.customBg?.[cellId] ?? undefined, ...colWidthStyle(cellId) }}
+                              style={{
+                                backgroundColor:
+                                  row.customBg?.[cellId] ?? (compareMismatch ? undefined : cellBg(undefined, row.row)),
+                                ...colWidthStyle(cellId),
+                              }}
                             >
                               {editMode ? (
                                 <select
@@ -2048,7 +2574,10 @@ export function IaDocumentationWorkspace() {
                               className={`whitespace-nowrap border-b border-black/5 px-1.5 py-1 text-ink ${
                                 paintColor ? "cursor-crosshair" : ""
                               }`}
-                              style={{ backgroundColor: row.customBg?.[cellId] ?? undefined, ...colWidthStyle(cellId) }}
+                              style={{
+                                backgroundColor: cellBg(row.customBg?.[cellId], row.row),
+                                ...colWidthStyle(cellId),
+                              }}
                             >
                               {editMode ? (
                                 <input
@@ -2071,7 +2600,10 @@ export function IaDocumentationWorkspace() {
                               className={`whitespace-nowrap border-b border-black/5 px-1.5 py-1 text-ink ${
                                 paintColor ? "cursor-crosshair" : ""
                               }`}
-                              style={{ backgroundColor: row.customBg?.[cellId] ?? undefined, ...colWidthStyle(cellId) }}
+                              style={{
+                                backgroundColor: cellBg(row.customBg?.[cellId], row.row),
+                                ...colWidthStyle(cellId),
+                              }}
                             >
                               {editMode ? (
                                 <input
@@ -2091,7 +2623,10 @@ export function IaDocumentationWorkspace() {
                             className={`whitespace-nowrap border-b border-black/5 px-1.5 py-1 text-ink ${
                               paintColor ? "cursor-crosshair" : ""
                             }`}
-                            style={{ backgroundColor: row.customBg?.epicStory ?? undefined, ...colWidthStyle("epicStory") }}
+                            style={{
+                              backgroundColor: cellBg(row.customBg?.epicStory, row.row),
+                              ...colWidthStyle("epicStory"),
+                            }}
                           >
                             {editMode ? (
                               <input
@@ -2111,7 +2646,7 @@ export function IaDocumentationWorkspace() {
                               paintColor ? "cursor-crosshair" : ""
                             }`}
                             style={{
-                              backgroundColor: row.customBg?.behaviorNote ?? undefined,
+                              backgroundColor: cellBg(row.customBg?.behaviorNote, row.row),
                               ...colWidthStyle("behaviorNote"),
                             }}
                           >
@@ -2133,7 +2668,7 @@ export function IaDocumentationWorkspace() {
                               paintColor ? "cursor-crosshair" : ""
                             }`}
                             style={{
-                              backgroundColor: row.customBg?.designNotes ?? undefined,
+                              backgroundColor: cellBg(row.customBg?.designNotes, row.row),
                               ...colWidthStyle("designNotes"),
                             }}
                           >
@@ -2156,8 +2691,8 @@ export function IaDocumentationWorkspace() {
             </div>
           ) : (
             <div
-              className="h-[70vh] w-full overflow-auto rounded-xl"
-              style={{ zoom: `${zoom}%` }}
+              className="w-full overflow-auto rounded-xl"
+              style={{ height: `${GRID_HEIGHT_VH}vh`, zoom: `${zoom}%` }}
             >
               <table className="w-full border-collapse text-left text-xs">
                 <thead>
@@ -2273,7 +2808,11 @@ export function IaDocumentationWorkspace() {
                               className={`border-b border-black/5 px-1.5 py-1 ${statusClass(value)} ${
                                 compareMismatch ? "bg-amber-100 dark:bg-amber-900/30" : ""
                               } ${paintColor ? "cursor-crosshair" : ""}`}
-                              style={{ backgroundColor: row.customBg?.[cellId] ?? undefined, ...colWidthStyle(cellId) }}
+                              style={{
+                                backgroundColor:
+                                  row.customBg?.[cellId] ?? (compareMismatch ? undefined : cellBg(undefined, row.row)),
+                                ...colWidthStyle(cellId),
+                              }}
                             >
                               {editMode ? (
                                 <select

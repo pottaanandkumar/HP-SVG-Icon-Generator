@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
       size: body?.size,
       color: body?.color,
       states: body?.states,
-      referenceImages: Array.isArray(body?.referenceImages) ? body.referenceImages : undefined,
     });
     if (result.svgs.length > 0) {
       // Show every icon the agent actually returned — its own prompt says
@@ -44,7 +43,6 @@ export async function POST(req: NextRequest) {
         executionId: result.executionId,
         jobId: result.jobId,
         libraryNote,
-        referenceImagesRejected: result.referenceImagesRejected ?? false,
       });
     }
     const error = result.timedOut
@@ -62,7 +60,6 @@ export async function POST(req: NextRequest) {
       timedOut: result.timedOut ?? false,
       executionId: result.executionId,
       jobId: result.jobId,
-      referenceImagesRejected: result.referenceImagesRejected ?? false,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Agent request failed";

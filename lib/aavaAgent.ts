@@ -25,9 +25,6 @@ export interface AgentIconResult {
   executionId?: string;
   /** True if we hit POLL_TIMEOUT_MS before the job reached a terminal status. */
   timedOut?: boolean;
-  /** True if reference images were provided but AAVA rejected them (file
-   * type not allowed for this agent) and the job ran without them. */
-  referenceImagesRejected?: boolean;
 }
 
 const SVG_TAG_RE = /<svg[\s\S]*?<\/svg>/gi;
@@ -100,27 +97,12 @@ export interface AgentIconRequestOptions {
   size?: string;
   color?: string;
   states?: string[];
-  /** Data URIs (e.g. "data:image/png;base64,...") from the browser's file
-   * picker -- optional, never persisted, only ever forwarded to AAVA. */
-  referenceImages?: string[];
 }
 
 interface SubmitResult {
   raw: unknown;
   jobId?: number;
   executionId?: string;
-  /** True if reference images were provided but AAVA rejected them (see
-   * dataUrlToBlob doc comment) and the job was submitted without them. */
-  referenceImagesRejected?: boolean;
-}
-
-function dataUrlToBlob(dataUrl: string): { blob: Blob; ext: string } | null {
-  const match = dataUrl.match(/^data:([^;]+);base64,([\s\S]*)$/);
-  if (!match) return null;
-  const [, mime, base64] = match;
-  const bytes = Buffer.from(base64, "base64");
-  const ext = mime.split("/")[1] ?? "bin";
-  return { blob: new Blob([bytes], { type: mime }), ext };
 }
 
 async function submitJob(
@@ -147,48 +129,18 @@ async function submitJob(
   // This endpoint only accepts multipart/form-data — application/json gets a
   // 415. Do not set a Content-Type header: fetch derives the correct
   // multipart boundary automatically from the FormData body.
-  const buildForm = (withImages: boolean) => {
-    const form = new FormData();
-    form.append("agentId", String(AGENT_ID));
-    form.append("userInputs", JSON.stringify(userInputs));
-    if (withImages) {
-      for (const dataUrl of options.referenceImages ?? []) {
-        const converted = dataUrlToBlob(dataUrl);
-        if (converted) form.append("files", converted.blob, `reference.${converted.ext}`);
-      }
-    }
-    return form;
-  };
+  const form = new FormData();
+  form.append("agentId", String(AGENT_ID));
+  form.append("userInputs", JSON.stringify(userInputs));
 
-  const submit = (form: FormData) =>
-    fetch(`${BASE_URL}${EXECUTE_PATH}`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json, text/plain, */*",
-        Authorization: `Bearer ${TOKEN}`,
-      },
-      body: form,
-    });
-
-  const hasImages = (options.referenceImages?.length ?? 0) > 0;
-  let res = await submit(buildForm(hasImages));
-  let referenceImagesRejected = false;
-
-  // Confirmed live against AAVA: this agent's file-upload config doesn't
-  // currently allow image MIME types ("File type not allowed: <name>"),
-  // even though the "files" field itself is recognized and works for other
-  // file types (verified with .txt/.pdf). Rather than failing the whole
-  // generation over an attachment AAVA won't accept yet, retry once without
-  // images and tell the caller so the UI can say so honestly.
-  if (!res.ok && hasImages) {
-    const bodyText = await res.text().catch(() => "");
-    if (res.status === 400 && /file type not allowed/i.test(bodyText)) {
-      referenceImagesRejected = true;
-      res = await submit(buildForm(false));
-    } else {
-      throw new Error(`Agent request failed (${res.status}): ${bodyText || res.statusText}`);
-    }
-  }
+  const res = await fetch(`${BASE_URL}${EXECUTE_PATH}`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json, text/plain, */*",
+      Authorization: `Bearer ${TOKEN}`,
+    },
+    body: form,
+  });
 
   if (!res.ok) {
     const body = await res.text().catch(() => "");
@@ -197,7 +149,7 @@ async function submitJob(
 
   const raw = await res.json().catch(async () => await res.text());
   const data = (raw as { data?: { jobId?: number; agentExecutionId?: string } })?.data;
-  return { raw, jobId: data?.jobId, executionId: data?.agentExecutionId, referenceImagesRejected };
+  return { raw, jobId: data?.jobId, executionId: data?.agentExecutionId };
 }
 
 interface HistoryResult {
@@ -296,7 +248,6 @@ async function runIconGeneratorAgentOnce(
       svgs: extractSvgs(submitted.raw),
       analysis: parseAgentAnalysis(submitted.raw),
       submitted: false,
-      referenceImagesRejected: submitted.referenceImagesRejected,
     };
   }
 
@@ -316,7 +267,6 @@ async function runIconGeneratorAgentOnce(
         submitted: true,
         jobId: submitted.jobId,
         executionId: submitted.executionId,
-        referenceImagesRejected: submitted.referenceImagesRejected,
       };
     }
     if (status === "FAILURE" || status === "ERROR" || status === "FAILED") {
@@ -335,6 +285,5 @@ async function runIconGeneratorAgentOnce(
     jobId: submitted.jobId,
     executionId: submitted.executionId,
     timedOut: true,
-    referenceImagesRejected: submitted.referenceImagesRejected,
   };
 }

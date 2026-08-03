@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { TopNav } from "@/components/TopNav";
 import { GeneratorSidebar } from "@/components/GeneratorSidebar";
 import { IaDocumentationWorkspace } from "@/components/IaDocumentationWorkspace";
@@ -10,13 +9,11 @@ export default function IaDocumentationPage() {
       <div className="flex flex-1">
         <GeneratorSidebar />
         <main className="min-w-0 flex-1 px-8 py-8">
-          <div className="mb-4 flex items-center gap-2 text-sm text-muted">
-            <Link href="/" className="hover:text-ink hover:underline">
-              All Agents
-            </Link>
-            <span>/</span>
-            <span className="text-ink">IA Documentation</span>
-          </div>
+          {/* Breadcrumb renders inside the workspace itself, sharing a row
+              with the action panel (Edit/Zoom/Export/Co-pilot) -- those
+              buttons depend on state that lives in the workspace component,
+              so the whole row moved there rather than trying to lift that
+              state up into this page or reach for a portal. */}
           <IaDocumentationWorkspace />
         </main>
       </div>
