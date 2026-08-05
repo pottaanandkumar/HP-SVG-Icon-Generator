@@ -54,6 +54,14 @@ export function IconGeneratorWorkspace() {
   const [activeResultIndex, setActiveResultIndex] = useState(0);
   const [libraryNote, setLibraryNote] = useState("");
   const [analysis, setAnalysis] = useState<AgentAnalysis | null>(null);
+  /** True when the agent's response was cut off mid-generation (hit its own
+   * output length limit) before finishing every variant it said it would
+   * produce -- resultIcons still holds every complete icon that did make it
+   * through, this is purely "the agent promised more than it delivered."
+   * expectedVariantCount is the count it claimed, when the response stated
+   * one (not always present). */
+  const [truncated, setTruncated] = useState(false);
+  const [expectedVariantCount, setExpectedVariantCount] = useState<number | null>(null);
   /** Which "screen" is showing. Details is an in-app view swap, not a route
    * change or a new tab — resultIcons/analysis/etc above live in this same
    * component and are just passed straight to IconDetailsScreen as props,
@@ -71,11 +79,18 @@ export function IconGeneratorWorkspace() {
     );
   }
 
+  // Extra resubmission attempts for a job that outlasted the initial ~90s
+  // window and then genuinely FAILED once handed to polling -- mirrors the
+  // backend's own MAX_ATTEMPTS retry for the fast path, which this doesn't
+  // cover (checkIconGeneratorExecution only ever checks the one already-
+  // submitted execution; it never resubmits on its own).
+  const MAX_GENERATION_RETRIES = 2;
+
   /** Takes over when the initial /api/agent/generate request times out
    * before the agent finishes -- keeps checking a cheap status endpoint on
    * its own short-lived requests until the job actually completes, instead
    * of the one long request that produced the "gave up waiting" error. */
-  async function pollExecutionStatus(executionId: string) {
+  async function pollExecutionStatus(executionId: string, name: string, retriesLeft: number) {
     setResultsStatus("waiting");
     const deadline = Date.now() + MAX_STATUS_POLL_MS;
 
@@ -89,10 +104,19 @@ export function IconGeneratorWorkspace() {
           setResultIcons(data.svgs ?? []);
           setActiveResultIndex(0);
           setAnalysis(data.analysis ?? null);
+          setTruncated(Boolean(data.truncated));
+          setExpectedVariantCount(data.expectedVariantCount ?? null);
           setResultsStatus("ready");
           return;
         }
         if (data.done && !data.ok) {
+          if (retriesLeft > 0) {
+            // A genuine AAVA-side failure on this specific execution, not
+            // "still running" -- try a fresh submission instead of dead-
+            // ending on it.
+            await submitGeneration(name, retriesLeft - 1);
+            return;
+          }
           setResultsError(data.error ?? "The research agent failed to produce icons.");
           setResultsStatus("error");
           return;
@@ -110,10 +134,65 @@ export function IconGeneratorWorkspace() {
     setResultsStatus("error");
   }
 
+  /** One generation attempt: submits, then either shows the result, hands
+   * off to resumable polling (job still running past ~90s), or -- if
+   * retriesLeft allows -- resubmits fresh on a genuine failure instead of
+   * surfacing it immediately. Shared by the initial submit and by the
+   * polling-path retry above so both go through the exact same handling. */
+  async function submitGeneration(name: string, retriesLeft: number) {
+    try {
+      const res = await fetch("/api/agent/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          icon_name: name,
+          icon_description: description.trim(),
+          size,
+          color,
+          states,
+        }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error ?? "Request failed");
+      }
+
+      setLibraryNote(data.libraryNote ?? "");
+
+      if (!data.ok && data.timedOut && data.executionId) {
+        // The agent is still genuinely running, not failed -- hand off to
+        // resumable polling instead of declaring defeat.
+        await pollExecutionStatus(data.executionId, name, retriesLeft);
+        return;
+      }
+
+      setResultIcons(data.svgs ?? []);
+      setActiveResultIndex(0);
+      setAnalysis(data.analysis ?? null);
+      setTruncated(Boolean(data.truncated));
+      setExpectedVariantCount(data.expectedVariantCount ?? null);
+
+      if (!data.ok) {
+        // Agent responded but produced no usable icons -- a real content
+        // failure, distinct from the network/exception path below. Route it
+        // to the same "error" status so the message actually renders instead
+        // of silently landing on "ready" with an empty icon list.
+        setResultsError(data.error ?? "The research agent didn't return any icon markup.");
+        setResultsStatus("error");
+      } else {
+        setResultsStatus("ready");
+      }
+    } catch (err) {
+      setResultsStatus("error");
+      setResultsError(err instanceof Error ? err.message : "Something went wrong");
+    }
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const name = query.trim();
-    if (!name) return;
+    if (!name || !description.trim()) return;
 
     setView("generator");
     setRepoStatus("searching");
@@ -123,6 +202,8 @@ export function IconGeneratorWorkspace() {
     setResultIcons([]);
     setLibraryNote("");
     setAnalysis(null);
+    setTruncated(false);
+    setExpectedVariantCount(null);
 
     // 1. Repo search — fast, shows immediately if found.
     try {
@@ -142,51 +223,7 @@ export function IconGeneratorWorkspace() {
     // response — icon_name and icon_description are both sent to it, and
     // whatever it returns (up to however many variants it generates) is
     // shown as-is, with no library/keyword-search icons mixed in.
-    try {
-      const res = await fetch("/api/agent/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          iconName: name,
-          description: description.trim(),
-          size,
-          color,
-          states,
-        }),
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error ?? "Request failed");
-      }
-
-      setLibraryNote(data.libraryNote ?? "");
-
-      if (!data.ok && data.timedOut && data.executionId) {
-        // The agent is still genuinely running, not failed -- hand off to
-        // resumable polling instead of declaring defeat.
-        await pollExecutionStatus(data.executionId);
-        return;
-      }
-
-      setResultIcons(data.svgs ?? []);
-      setActiveResultIndex(0);
-      setAnalysis(data.analysis ?? null);
-
-      if (!data.ok) {
-        // Agent responded but produced no usable icons -- a real content
-        // failure, distinct from the network/exception path below. Route it
-        // to the same "error" status so the message actually renders instead
-        // of silently landing on "ready" with an empty icon list.
-        setResultsError(data.error ?? "The research agent didn't return any icon markup.");
-        setResultsStatus("error");
-      } else {
-        setResultsStatus("ready");
-      }
-    } catch (err) {
-      setResultsStatus("error");
-      setResultsError(err instanceof Error ? err.message : "Something went wrong");
-    }
+    await submitGeneration(name, MAX_GENERATION_RETRIES);
   }
 
   const isLoading =
@@ -217,21 +254,21 @@ export function IconGeneratorWorkspace() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-ink" htmlFor="icon-name">
-              Icon name
+              Icon name <span className="text-red-500">*</span>
             </label>
             <input
               id="icon-name"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="e.g. printer, shopping-cart, calendar…"
+              required
               className="rounded-lg border border-black/10 bg-panel px-4 py-3 text-sm text-ink placeholder:text-muted focus:border-brand focus:outline-none"
             />
           </div>
 
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-ink" htmlFor="icon-description">
-              Description
-              {/* <span className="font-normal text-muted">(optional)</span> */}
+              Description <span className="text-red-500">*</span>
             </label>
             <textarea
               id="icon-description"
@@ -239,6 +276,7 @@ export function IconGeneratorWorkspace() {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="e.g. show paper sheets entering a tray from the side, minimal line style…"
               rows={3}
+              required
               className="resize-none rounded-lg border border-black/10 bg-panel px-4 py-3 text-sm text-ink placeholder:text-muted focus:border-brand focus:outline-none"
             />
           </div>
@@ -327,7 +365,7 @@ export function IconGeneratorWorkspace() {
 
           <button
             type="submit"
-            disabled={isLoading || !query.trim()}
+            disabled={isLoading || !query.trim() || !description.trim()}
             className="flex items-center justify-center gap-2 rounded-lg bg-brand px-4 py-3 text-sm font-medium text-white hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
@@ -364,6 +402,19 @@ export function IconGeneratorWorkspace() {
           </div>
         )}
 
+        {resultsStatus === "ready" && truncated && (
+          <div className="flex items-start gap-3 rounded-2xl border border-amber-300/60 bg-amber-50 p-4 text-sm text-amber-900">
+            <AlertTriangle size={18} className="mt-0.5 shrink-0" />
+            <p>
+              The agent&apos;s response was cut off before it finished
+              {expectedVariantCount
+                ? ` — it planned ${expectedVariantCount} variants but only ${resultIcons.length} came through complete`
+                : ` — it likely planned more variants than the ${resultIcons.length} shown here`}
+              . Nothing was left out on our end; try generating again for a fresh (possibly more complete) response.
+            </p>
+          </div>
+        )}
+
         {resultsStatus === "loading" && (
           <div className="flex h-64 flex-col items-center justify-center gap-3 rounded-2xl bg-surface p-6 text-center text-sm text-muted shadow-sm">
             <Loader2 size={20} className="animate-spin text-brand" />
@@ -393,6 +444,31 @@ export function IconGeneratorWorkspace() {
           <div className="flex items-start gap-3 rounded-2xl border border-amber-300/60 bg-amber-50 p-4 text-sm text-amber-900">
             <AlertTriangle size={18} className="mt-0.5 shrink-0" />
             <p className="text-amber-800">{resultsError}</p>
+          </div>
+        )}
+
+        {resultsStatus === "ready" && resultIcons.length > 0 && analysis?.semanticAnalysis && (
+          <div className="rounded-2xl bg-surface p-6 shadow-sm">
+            <p className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-brand">
+              From the agent&apos;s response
+            </p>
+            <h3 className="mb-4 text-lg font-semibold text-ink">Semantic Analysis</h3>
+            <div className="flex flex-col gap-3">
+              {[
+                ["User Goal", analysis.semanticAnalysis.userGoal],
+                ["Action", analysis.semanticAnalysis.action],
+                ["Expected Interpretation", analysis.semanticAnalysis.expectedInterpretation],
+              ]
+                .filter((entry): entry is [string, string] => Boolean(entry[1]))
+                .map(([label, value]) => (
+                  <div key={label} className="rounded-xl border border-black/5 bg-panel p-3">
+                    <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-muted">
+                      {label}
+                    </p>
+                    <p className="text-sm text-ink/80">{value}</p>
+                  </div>
+                ))}
+            </div>
           </div>
         )}
 

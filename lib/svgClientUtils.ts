@@ -1,20 +1,32 @@
 import JSZip from "jszip";
 
 /** Repo icons ship as fixed fill="white" glyphs; agent-generated icons ship
- * as fixed stroke="black" outlines. Converting both to currentColor lets the
- * same markup pick up color from CSS (mode-based ink/white, or an explicit
- * override) instead of staying stuck on one hardcoded value regardless of
- * light/dark background. */
+ * as fixed stroke="black" outlines (some agent versions single-quote their
+ * attributes instead of double-quoting, e.g. fill='currentColor' -- matching
+ * both quote styles avoids silently no-op'ing against those). Converting
+ * both to currentColor lets the same markup pick up color from CSS
+ * (mode-based ink/white, or an explicit override) instead of staying stuck
+ * on one hardcoded value regardless of light/dark background. */
 export function toCurrentColor(svg: string): string {
   return svg
-    .replace(/fill="(#fff(fff)?|white)"/gi, 'fill="currentColor"')
-    .replace(/stroke="(#000(000)?|black)"/gi, 'stroke="currentColor"');
+    .replace(/fill=(["'])(#fff(fff)?|white)\1/gi, 'fill="currentColor"')
+    .replace(/stroke=(["'])(#000(000)?|black)\1/gi, 'stroke="currentColor"');
 }
 
+/** Sets the size on the root <svg> element specifically -- agent-generated
+ * icons often only carry a viewBox with no width/height at all, and an
+ * unanchored replace risks touching a child element's width/height (e.g. a
+ * <rect width="16">) instead. Matching the opening <svg ...> tag directly and
+ * stripping+reinserting its own width/height handles both "missing" and
+ * "present" cases the same way. Strips both "..." and '...' quoted
+ * width/height (some agent versions single-quote all their attributes) so a
+ * leftover old value can't win out over the new one via attribute-duplicate
+ * rules when the browser parses the markup. */
 export function applySize(svg: string, pxSize: number): string {
-  return svg
-    .replace(/width="\d+(\.\d+)?"/, `width="${pxSize}"`)
-    .replace(/height="\d+(\.\d+)?"/, `height="${pxSize}"`);
+  return svg.replace(/<svg\b([^>]*)>/i, (_match, attrs: string) => {
+    const stripped = attrs.replace(/\s*(width|height)=("[^"]*"|'[^']*')/gi, "");
+    return `<svg${stripped} width="${pxSize}" height="${pxSize}">`;
+  });
 }
 
 /**
@@ -27,8 +39,8 @@ export function applySize(svg: string, pxSize: number): string {
 export function applyIconStyle(svg: string, color: string | null, pxSize: number): string {
   const colored = color
     ? svg
-        .replace(/fill="(#fff(fff)?|white|currentColor)"/gi, `fill="${color}"`)
-        .replace(/stroke="(#000(000)?|black|currentColor)"/gi, `stroke="${color}"`)
+        .replace(/fill=(["'])(#fff(fff)?|white|currentColor)\1/gi, `fill="${color}"`)
+        .replace(/stroke=(["'])(#000(000)?|black|currentColor)\1/gi, `stroke="${color}"`)
     : toCurrentColor(svg);
   return applySize(colored, pxSize);
 }

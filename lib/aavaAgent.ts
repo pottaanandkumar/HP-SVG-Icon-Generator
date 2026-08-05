@@ -25,6 +25,17 @@ export interface AgentIconResult {
   executionId?: string;
   /** True if we hit POLL_TIMEOUT_MS before the job reached a terminal status. */
   timedOut?: boolean;
+  /** True when the agent's own response was cut off mid-generation (hit its
+   * output length limit) before finishing every variant it said it would
+   * produce -- see detectTruncation. When true, svgs still holds every
+   * complete, valid icon that actually made it into the response; nothing
+   * is fabricated to fill the gap, the frontend just gets told the count
+   * came up short instead of silently showing fewer icons than promised. */
+  truncated?: boolean;
+  /** The variant count the agent's own preamble claimed (e.g. "All 20
+   * variants explore..."), when the response states one. Undefined if the
+   * response never stated a target count. */
+  expectedVariantCount?: number;
 }
 
 const SVG_TAG_RE = /<svg[\s\S]*?<\/svg>/gi;
@@ -71,6 +82,58 @@ function extractSvgs(payload: unknown): string[] {
   return extractSvgsFromText(getOutputText(payload));
 }
 
+/** Detects when the agent's response was cut off mid-generation (hit its own
+ * output length limit) before finishing every variant it said it would
+ * produce -- confirmed live: a "System Health Apps" run whose preamble said
+ * "All 20 variants explore..." actually delivered only 12 complete SVGs,
+ * with the 13th cut off mid-<path>, no closing </svg>, and variants 14-20
+ * never generated at all. Two signals, either one is enough:
+ *   1. The preamble states a target count ("All N variants") higher than
+ *      how many actually came through.
+ *   2. The last "**Variant" header in the text has an unclosed <svg> (or no
+ *      <svg> at all) after it -- the response stopped mid-variant.
+ * Not a parsing bug: this data genuinely isn't in the response, so the only
+ * honest fix is telling the user rather than silently showing fewer icons
+ * than the agent promised. */
+function detectTruncation(
+  text: string,
+  actualCount: number
+): { truncated: boolean; expectedVariantCount?: number } {
+  const claimedMatch = text.match(/All (\d+) variants/i);
+  const expectedVariantCount = claimedMatch ? Number(claimedMatch[1]) : undefined;
+  if (expectedVariantCount && actualCount < expectedVariantCount) {
+    return { truncated: true, expectedVariantCount };
+  }
+
+  const trailing = text.slice(-4000);
+  const lastVariantIdx = trailing.lastIndexOf("**Variant");
+  if (lastVariantIdx !== -1) {
+    const afterLastVariant = trailing.slice(lastVariantIdx);
+    // The last variant header in the whole response has no closing </svg>
+    // after it -- either its SVG never finished, or it never started at
+    // all, either way the response ended mid-variant.
+    if (!/<\/svg>/i.test(afterLastVariant)) {
+      return { truncated: true, expectedVariantCount };
+    }
+  }
+
+  return { truncated: false, expectedVariantCount };
+}
+
+/** Reads a top-level `"key": "value"` string field out of (possibly
+ * truncated, possibly non-JSON) response text by key name rather than
+ * requiring the whole payload to be valid JSON. Unescapes standard JSON
+ * string escapes (\n, \", etc.) in the captured value. */
+function extractJsonStringField(text: string, key: string): string | undefined {
+  const match = text.match(new RegExp(`"${key}"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"`));
+  if (!match) return undefined;
+  try {
+    return JSON.parse(`"${match[1]}"`) as string;
+  } catch {
+    return match[1];
+  }
+}
+
 /** Pulls the agent's own stated reasoning out of its free-text response --
  * never fabricated. Every field is optional: if a given run's output
  * doesn't include that part (wording varies run to run), the field is just
@@ -89,7 +152,40 @@ function parseAgentAnalysis(payload: unknown): AgentAnalysis {
     ? Array.from(approachesBlock.matchAll(/^\s*\d+\.\s*(.+)$/gm)).map((m) => m[1].trim())
     : [];
 
-  return { semanticMatch, namedFeatureResearch, structuralApproaches };
+  // Some agent runs open with an explicit framing block instead: "User
+  // Goal: Generate 20 distinct HP-compliant SVG icon variants representing
+  // a printer paper tray" / "Action: Construct 20 filled-path evenodd SVG
+  // icons on 24×24 canvas..." / "Expected Interpretation: 'Printer tray
+  // icon — a flat-bottomed rectangular tray form...'". Verified live against
+  // a real "printer tray" run. Surrounding quotes on Expected Interpretation
+  // are stripped for display -- they're just how the agent quotes its own
+  // description, not part of the content.
+  //
+  // The current agent ("Enterprise SVG Icon Design System Guardian") instead
+  // emits a JSON object with "user_goal"/"action"/"expected_interpretation"
+  // keys -- verified live. These are pulled by key via regex rather than a
+  // full JSON.parse of the whole response: the object's trailing "svgs"
+  // array is what hits the agent's own output-length limit (see
+  // detectTruncation above), so the response is very often truncated by the
+  // time it reaches these three fields' closing brace -- a strict parse
+  // would throw on that truncated tail and lose fields that are themselves
+  // fully intact, since they sit earlier in the object.
+  const userGoal =
+    extractJsonStringField(text, "user_goal") ?? text.match(/User Goal:\s*(.+)/)?.[1]?.trim();
+  const action =
+    extractJsonStringField(text, "action") ?? text.match(/Action:\s*(.+)/)?.[1]?.trim();
+  const expectedInterpretation =
+    extractJsonStringField(text, "expected_interpretation") ??
+    text
+      .match(/Expected Interpretation:\s*(.+)/)?.[1]
+      ?.trim()
+      .replace(/^["']|["']$/g, "");
+  const semanticAnalysis =
+    userGoal || action || expectedInterpretation
+      ? { userGoal, action, expectedInterpretation }
+      : undefined;
+
+  return { semanticMatch, namedFeatureResearch, structuralApproaches, semanticAnalysis };
 }
 
 export interface AgentIconRequestOptions {
@@ -109,21 +205,26 @@ async function submitJob(
   iconName: string,
   options: AgentIconRequestOptions
 ): Promise<SubmitResult> {
-  // AAVA's input binding for this agent requires the userInputs keys to be
-  // the literal "{{icon_name}}" / "{{icon_description}}" strings -- braces
-  // included -- not the bare "icon_name" / "icon_description". Sending the
-  // bare names appears to bind *sometimes* (probably via some fuzzy/fallback
-  // matching on AAVA's side), which is what made this look like flaky,
-  // input-dependent failures ("edit" reliably broken, then later "printer"
-  // and even previously-100%-reliable words like "settings" failing too)
-  // rather than a single reproducible cause. Confirmed by testing the exact
-  // same payload shape both ways, repeatedly, directly against AAVA
-  // (bypassing this app): bare keys intermittently collapse icon_name to a
-  // stray "." regardless of word; the braced keys below bound correctly on
-  // every retry, including for "edit" with no other workaround needed.
+  // The input key format is a property of whichever agent AAVA_AGENT_ID
+  // currently points at, not a fixed platform rule -- it has changed at
+  // least once as the configured agent itself changed. An earlier agent's
+  // prompt template specifically required braced "{{icon_name}}" /
+  // "{{icon_description}}" keys (bare names bound unreliably for it). The
+  // agent now configured ("Enterprise SVG Icon Design System Guardian")
+  // instead reads a literal input.json file via FileReadTool and its own
+  // written contract explicitly requires bare "icon_name" / "icon_description"
+  // -- "do not substitute iconName/description or any other casing/naming
+  // variant" (no braces mentioned at all). Confirmed live: submitting with
+  // braced keys failed in ~22s (an immediate input-parsing rejection);
+  // submitting with bare keys ran for a genuine ~5 minutes before failing on
+  // an unrelated AI Gateway 500 (the same INTERNAL_001 infra error already
+  // seen in this agent's own execution logs) -- i.e. bare keys are read
+  // correctly and the pipeline actually runs. If AAVA_AGENT_ID changes again
+  // to a differently-configured agent, re-verify this against that agent's
+  // own documented input contract rather than assuming either format holds.
   const userInputs = {
-    "{{icon_name}}": iconName,
-    "{{icon_description}}": options.description ?? "",
+    icon_name: iconName,
+    icon_description: options.description ?? "",
   };
 
   // This endpoint only accepts multipart/form-data — application/json gets a
@@ -189,6 +290,8 @@ export interface AgentExecutionCheck {
   svgs: string[];
   analysis: AgentAnalysis;
   raw: unknown;
+  truncated?: boolean;
+  expectedVariantCount?: number;
 }
 
 /**
@@ -205,11 +308,15 @@ export async function checkIconGeneratorExecution(executionId: string): Promise<
   const status = history.status?.toUpperCase();
 
   if (status === "SUCCESS") {
+    const svgs = extractSvgs(history.raw);
+    const { truncated, expectedVariantCount } = detectTruncation(getOutputText(history.raw), svgs.length);
     return {
       status: "SUCCESS",
-      svgs: extractSvgs(history.raw),
+      svgs,
       analysis: parseAgentAnalysis(history.raw),
       raw: history.raw,
+      truncated,
+      expectedVariantCount,
     };
   }
   if (status === "FAILURE" || status === "ERROR" || status === "FAILED") {
@@ -228,10 +335,21 @@ export async function runIconGeneratorAgent(
   options: AgentIconRequestOptions = {}
 ): Promise<AgentIconResult> {
   let lastResult: AgentIconResult | null = null;
+  let lastError: unknown = null;
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-    lastResult = await runIconGeneratorAgentOnce(iconName, options);
-    if (lastResult.svgs.length > 0 || lastResult.timedOut) return lastResult;
+    // runIconGeneratorAgentOnce throws when AAVA reports a genuine FAILURE/
+    // ERROR status for this attempt (not just "no svgs") -- without this
+    // try/catch, that throw would escape the loop on attempt 1 and MAX_ATTEMPTS
+    // would never actually get a chance to retry, defeating its own purpose.
+    try {
+      lastResult = await runIconGeneratorAgentOnce(iconName, options);
+      lastError = null;
+      if (lastResult.svgs.length > 0 || lastResult.timedOut) return lastResult;
+    } catch (err) {
+      lastError = err;
+    }
   }
+  if (lastError) throw lastError;
   return lastResult!;
 }
 
@@ -243,11 +361,15 @@ async function runIconGeneratorAgentOnce(
 
   if (!submitted.executionId) {
     // Submitted but no execution id to poll — return whatever we got.
+    const svgs = extractSvgs(submitted.raw);
+    const { truncated, expectedVariantCount } = detectTruncation(getOutputText(submitted.raw), svgs.length);
     return {
       raw: submitted.raw,
-      svgs: extractSvgs(submitted.raw),
+      svgs,
       analysis: parseAgentAnalysis(submitted.raw),
       submitted: false,
+      truncated,
+      expectedVariantCount,
     };
   }
 
@@ -260,13 +382,17 @@ async function runIconGeneratorAgentOnce(
 
     const status = lastHistory.status?.toUpperCase();
     if (status === "SUCCESS") {
+      const svgs = extractSvgs(lastHistory.raw);
+      const { truncated, expectedVariantCount } = detectTruncation(getOutputText(lastHistory.raw), svgs.length);
       return {
         raw: lastHistory.raw,
-        svgs: extractSvgs(lastHistory.raw),
+        svgs,
         analysis: parseAgentAnalysis(lastHistory.raw),
         submitted: true,
         jobId: submitted.jobId,
         executionId: submitted.executionId,
+        truncated,
+        expectedVariantCount,
       };
     }
     if (status === "FAILURE" || status === "ERROR" || status === "FAILED") {

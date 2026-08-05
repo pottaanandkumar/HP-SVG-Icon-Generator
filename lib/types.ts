@@ -4,6 +4,19 @@ export interface RepoIconMatch {
   svg: string;
 }
 
+/** The agent's own stated framing of the request, e.g. "User Goal: Generate
+ * 20 distinct HP-compliant SVG icon variants representing a printer paper
+ * tray" / "Action: Construct 20 filled-path evenodd SVG icons on 24×24
+ * canvas..." / "Expected Interpretation: 'Printer tray icon — a
+ * flat-bottomed rectangular tray form...'". Real fields the agent actually
+ * states -- which 3 fields a given agent version produces (if any) varies,
+ * so each is independently optional. */
+export interface AgentSemanticAnalysis {
+  userGoal?: string;
+  action?: string;
+  expectedInterpretation?: string;
+}
+
 /** Parsed from the agent's own free-text reasoning (not fabricated) --
  * anything not present in that run's actual response is left undefined so
  * the frontend can skip that part of the report rather than show a blank. */
@@ -11,6 +24,7 @@ export interface AgentAnalysis {
   semanticMatch?: string;
   namedFeatureResearch?: string;
   structuralApproaches: string[];
+  semanticAnalysis?: AgentSemanticAnalysis;
 }
 
 export interface AgentGenerateResponse {

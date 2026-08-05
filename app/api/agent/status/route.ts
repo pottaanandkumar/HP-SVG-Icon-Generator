@@ -18,7 +18,14 @@ export async function GET(req: NextRequest) {
     const result = await checkIconGeneratorExecution(executionId);
 
     if (result.status === "SUCCESS") {
-      return NextResponse.json({ ok: true, done: true, svgs: result.svgs, analysis: result.analysis });
+      return NextResponse.json({
+        ok: true,
+        done: true,
+        svgs: result.svgs,
+        analysis: result.analysis,
+        truncated: result.truncated ?? false,
+        expectedVariantCount: result.expectedVariantCount,
+      });
     }
     if (result.status === "FAILURE") {
       return NextResponse.json({

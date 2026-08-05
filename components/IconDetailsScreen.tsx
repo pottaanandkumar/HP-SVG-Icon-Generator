@@ -84,7 +84,7 @@ export function IconDetailsScreen({
   }
 
   return (
-    <div className="flex min-w-0 flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-4xl min-w-0 flex-col gap-6">
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}

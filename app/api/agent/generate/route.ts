@@ -5,11 +5,14 @@ import { searchIconRepo } from "@/lib/iconRepo";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
-  const iconName = body?.iconName?.trim();
-  const description = body?.description?.trim();
+  const iconName = body?.icon_name?.trim();
+  const description = body?.icon_description?.trim();
 
   if (!iconName) {
-    return NextResponse.json({ error: "Missing 'iconName' in request body" }, { status: 400 });
+    return NextResponse.json({ error: "Missing 'icon_name' in request body" }, { status: 400 });
+  }
+  if (!description) {
+    return NextResponse.json({ error: "Missing 'icon_description' in request body" }, { status: 400 });
   }
 
   // Icon options come exclusively from the AI agent's own response — per
@@ -43,6 +46,8 @@ export async function POST(req: NextRequest) {
         executionId: result.executionId,
         jobId: result.jobId,
         libraryNote,
+        truncated: result.truncated ?? false,
+        expectedVariantCount: result.expectedVariantCount,
       });
     }
     const error = result.timedOut
